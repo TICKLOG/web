@@ -127,10 +127,10 @@ export async function loadStreak(uuid: string) {
   return row?.days ?? 0;
 }
 
-// Totals per kind and the top three servers (without hidden ones).
+// Totals per kind and the top three servers.
 export async function loadBreakdown(uuid: string): Promise<BreakdownData> {
   const total = sql<number>`sum(${playtime.seconds})::int`;
-  const [kinds, servers, settings] = await Promise.all([
+  const [kinds, servers] = await Promise.all([
     db
       .select({ kind: playtime.kind, seconds: total })
       .from(playtime)
@@ -154,27 +154,18 @@ export async function loadBreakdown(uuid: string): Promise<BreakdownData> {
       )
       .groupBy(playtime.server)
       .having(gte(total, 60))
-      .orderBy(desc(total)),
-    db
-      .select({ featured: playerSettings.featuredServer })
-      .from(playerSettings)
-      .where(eq(playerSettings.uuid, uuid)),
+      .orderBy(desc(total))
+      .limit(3),
   ]);
   const of = (k: Kind) => kinds.find((r) => r.kind === k)?.seconds ?? 0;
-  // The featured server goes first, then the most played ones.
-  const featured = settings[0]?.featured;
-  const top = [
-    ...servers.filter((s) => s.server === featured).map((s) => ({ ...s, featured: true })),
-    ...servers.filter((s) => s.server !== featured),
-  ].slice(0, 3);
-  return { server: of("server"), singleplayer: of("singleplayer"), launcher: of("launcher"), servers: top };
+  return { server: of("server"), singleplayer: of("singleplayer"), launcher: of("launcher"), servers };
 }
 
 // Every listed server of a player (at least a minute), most played first, and
-// whether the player hid or featured it.
+// whether the player hid it from their top servers.
 export async function loadServers(uuid: string) {
   const total = sql<number>`sum(${playtime.seconds})::int`;
-  const [rows, hidden, settings] = await Promise.all([
+  const [rows, hidden] = await Promise.all([
     db
       .select({ server: playtime.server, seconds: total })
       .from(playtime)
@@ -183,14 +174,9 @@ export async function loadServers(uuid: string) {
       .having(gte(total, 60))
       .orderBy(desc(total)),
     db.select({ server: hiddenServers.server }).from(hiddenServers).where(eq(hiddenServers.uuid, uuid)),
-    db
-      .select({ featured: playerSettings.featuredServer })
-      .from(playerSettings)
-      .where(eq(playerSettings.uuid, uuid)),
   ]);
   const off = new Set(hidden.map((h) => h.server));
-  const featured = settings[0]?.featured;
-  return rows.map((r) => ({ ...r, hidden: off.has(r.server), featured: r.server === featured }));
+  return rows.map((r) => ({ ...r, hidden: off.has(r.server) }));
 }
 
 // Whether the player hid their profile (stats, streak and servers).

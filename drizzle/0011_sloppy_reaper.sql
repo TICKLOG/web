@@ -1,0 +1,1 @@
+ALTER TABLE "ticklog"."player_settings" DROP COLUMN "featured_server";

@@ -78,6 +78,13 @@
       "when": 1793316760621,
       "tag": "0010_good_sentry",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1793316958704,
+      "tag": "0011_sloppy_reaper",
+      "breakpoints": true
     }
   ]
 }
