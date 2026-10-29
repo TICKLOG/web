@@ -23,10 +23,9 @@ function MicrosoftLogo() {
 }
 
 // Curved connector from the vertical line to each row, like the reference
-// design; the line continues past every row but the last. --trunk and
-// --branch color the line down to the selected account.
+// design; the line continues past every row but the last.
 const branch =
-  "relative before:pointer-events-none before:absolute before:top-0 before:-left-4 before:h-1/2 before:w-3 before:rounded-bl-[6px] before:z-[1] before:border-b before:border-l before:border-[var(--branch,var(--divider))] before:border-l-[var(--branch,var(--trunk,var(--divider)))] not-last:after:pointer-events-none not-last:after:absolute not-last:after:top-0 not-last:after:-bottom-0.5 not-last:after:-left-4 not-last:after:border-l not-last:after:border-[var(--trunk,var(--divider))] collapsed:before:hidden collapsed:after:hidden";
+  "relative before:pointer-events-none before:absolute before:top-0 before:-left-4 before:h-1/2 before:w-3 before:rounded-bl-[6px] before:border-b before:border-l before:border-[var(--divider)] not-last:after:pointer-events-none not-last:after:absolute not-last:after:top-0 not-last:after:-bottom-0.5 not-last:after:-left-4 not-last:after:border-l not-last:after:border-[var(--divider)] collapsed:before:hidden collapsed:after:hidden";
 
 const subItem =
   "flex h-9 w-full cursor-pointer items-center gap-2.5 rounded-[8px] px-2.5 text-left text-[14px] transition-colors collapsed:px-3";
@@ -70,25 +69,13 @@ export function AccountsNav({ accounts }: { accounts: NavAccount[] }) {
         {/* Collapsed sidebar: only the heads (and the Microsoft logo) remain, on
             the icon axis in 44px rows, also while it expands. */}
         <ul className="mt-1 ml-[21px] flex flex-col gap-0.5 pl-4 collapsed:ml-0 collapsed:pl-0">
-          {list.map((account, i, all) => {
+          {list.map((account) => {
             const href = `/accounts/${account.name.toLowerCase()}`;
             // Marked only while its page is open.
             const isActive = pathname === href;
-            // The tree line from the top down to the selected account is drawn
-            // in the icon color (dark gray in light mode, light gray in dark mode).
-            const line = isActive
-              ? { "--branch": "var(--icon)" }
-              : all
-                    .slice(i + 1)
-                    .some(
-                      (a) => pathname === `/accounts/${a.name.toLowerCase()}`,
-                    )
-                ? { "--trunk": "var(--icon)" }
-                : undefined;
             return (
               <li
                 key={account.uuid}
-                style={line as React.CSSProperties | undefined}
                 draggable
                 onDragStart={(e) => {
                   e.dataTransfer.effectAllowed = "move";
@@ -120,14 +107,14 @@ export function AccountsNav({ accounts }: { accounts: NavAccount[] }) {
                     await reorderAccounts(order.map((a) => a.uuid));
                   });
                 }}
-                className={`group/row ${branch} flex items-center rounded-[8px] collapsed:w-11 hover:bg-hover ${drag?.uuid === account.uuid ? "bg-hover" : ""} ${isActive ? "collapsed:bg-hover" : ""}`}
+                className={`group/row ${branch} flex items-center rounded-[8px] collapsed:w-11 ${isActive ? "bg-nav-active" : "hover:bg-hover"} ${drag?.uuid === account.uuid && !isActive ? "bg-hover" : ""}`}
               >
                 <Link
                   href={href}
                   aria-current={isActive ? "page" : undefined}
                   draggable={false}
                   title={account.name}
-                  className={`${subItem} min-w-0 flex-1 ${isActive ? "font-semibold text-heading" : "text-nav-text hover:text-heading"}`}
+                  className={`${subItem} min-w-0 flex-1 ${isActive ? "text-nav-active-text" : "text-nav-text hover:text-heading"}`}
                 >
                   <Image
                     src={`/heads/${account.uuid}.png`}
@@ -137,14 +124,6 @@ export function AccountsNav({ accounts }: { accounts: NavAccount[] }) {
                     unoptimized
                     draggable={false}
                     className="size-5 max-w-none shrink-0 rounded-[4px] [image-rendering:pixelated]"
-                    style={
-                      isActive
-                        ? {
-                            outline: "1.5px solid var(--icon)",
-                            outlineOffset: "1.5px",
-                          }
-                        : undefined
-                    }
                   />
                   <span className="truncate collapsed:hidden">
                     {account.name}
