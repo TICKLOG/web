@@ -109,7 +109,8 @@ export default async function PlayerPage({
               <CopyButton text={profile.uuid} />
             </div>
           </div>
-          <div className="flex shrink-0 items-center gap-2">
+          {/* Moved down so the gap to the activity box matches the one between activity and stats (16px). */}
+          <div className="flex shrink-0 translate-y-2 items-center gap-2">
             <Streak days={streak} />
             <LikeButton uuid={profile.uuid} {...liking} />
           </div>
