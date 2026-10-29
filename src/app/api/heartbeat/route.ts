@@ -1,4 +1,4 @@
-import { creditBeat, KINDS, type Kind, normalizeServer } from "@/lib/playtime";
+import { creditBeat, KINDS, type Kind, normalizeServer, verifiedServer } from "@/lib/playtime";
 
 // Sent by the mod every 30 seconds (and when the player switches between
 // launcher, singleplayer and servers) for the stretch that just ended.
@@ -8,7 +8,8 @@ export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
   const kind = KINDS.find((k) => k === body?.kind) as Kind | undefined;
   if (!token || !kind) return Response.json({ error: "Bad request" }, { status: 400 });
-  const server = kind === "server" && typeof body.server === "string" ? normalizeServer(body.server) : "";
+  const address = kind === "server" && typeof body.server === "string" ? normalizeServer(body.server) : "";
+  const server = await verifiedServer(token, address);
   if (!(await creditBeat(token, kind, server))) {
     return Response.json({ error: "Unknown token" }, { status: 401 });
   }

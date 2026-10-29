@@ -1,4 +1,5 @@
 import { connection, NextResponse } from "next/server";
+import { isReachable } from "@/lib/playtime";
 import { pingFavicon } from "@/lib/server-ping";
 
 // Icons this process already found, kept small; failures aren't kept, so a
@@ -13,7 +14,13 @@ export async function GET(req: Request) {
   const server = (new URL(req.url).searchParams.get("s") ?? "")
     .trim()
     .toLowerCase();
-  if (!/^[a-z0-9.\-_:[\]]{1,64}$/.test(server) || !server.includes(".")) {
+  // Only servers the mod reported and that answered a ping, so this can't be
+  // used to ping arbitrary addresses.
+  if (
+    !/^[a-z0-9.\-_:[\]]{1,64}$/.test(server) ||
+    !server.includes(".") ||
+    !(await isReachable(server))
+  ) {
     return new NextResponse(null, { status: 404 });
   }
   let icon = cache.get(server);

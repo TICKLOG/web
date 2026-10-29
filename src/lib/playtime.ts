@@ -1,7 +1,9 @@
 import { createHash } from "node:crypto";
+import { isIP } from "node:net";
 import { and, desc, eq, gte, ne, sql } from "drizzle-orm";
 import { db } from "@/db";
-import { modSessions, playtime } from "@/db/schema";
+import { modSessions, playtime, servers } from "@/db/schema";
+import { pingStatus } from "@/lib/server-ping";
 import type { BreakdownData } from "@/components/breakdown";
 
 // The mod beats every 30s; a longer gap (game frozen, offline) is not credited
@@ -20,6 +22,55 @@ export function hashToken(token: string) {
 export function normalizeServer(address: string) {
   const s = address.trim().toLowerCase().replace(/\.$/, "").replace(/:25565$/, "");
   return s.length <= 253 && /^[a-z0-9._:\-[\]]+$/.test(s) ? s : "";
+}
+
+// How long a ping result is trusted before the server is checked again.
+const REACHABLE_FOR = 7 * 24 * 3600_000;
+const UNREACHABLE_FOR = 3600_000;
+
+// New addresses a token may have checked: 5 per 10 minutes, so random names
+// can't make us ping the whole internet.
+const checks = new Map<string, number[]>();
+function mayCheck(token: string) {
+  const now = Date.now();
+  const recent = (checks.get(token) ?? []).filter((t) => t > now - 600_000);
+  if (checks.size > 10_000) checks.clear();
+  checks.set(token, recent);
+  if (recent.length >= 5) return false;
+  recent.push(now);
+  return true;
+}
+
+// The address to list the time under, or "" to only count it as server time:
+// IPs (private servers), local names and addresses no Minecraft server
+// answers on aren't listed. Realms has no address and is kept as "realms".
+export async function verifiedServer(token: string, address: string) {
+  if (!address || address === "realms") return address;
+  const host = address.replace(/:\d+$/, "");
+  if (address.startsWith("[") || isIP(host) || !host.includes(".")) return "";
+  const [known] = await db.select().from(servers).where(eq(servers.address, address));
+  if (known) {
+    const age = Date.now() - known.checkedAt.getTime();
+    if (age < (known.reachable ? REACHABLE_FOR : UNREACHABLE_FOR)) {
+      return known.reachable ? address : "";
+    }
+  }
+  if (!mayCheck(token)) return known?.reachable ? address : "";
+  const reachable = (await pingStatus(address)) !== null;
+  await db
+    .insert(servers)
+    .values({ address, reachable })
+    .onConflictDoUpdate({ target: servers.address, set: { reachable, checkedAt: sql`now()` } });
+  return reachable ? address : "";
+}
+
+// Whether an address passed the ping check (for server icons).
+export async function isReachable(address: string) {
+  const [row] = await db
+    .select({ reachable: servers.reachable })
+    .from(servers)
+    .where(eq(servers.address, address));
+  return row?.reachable ?? false;
 }
 
 // Credits the time since the last beat (capped) to `kind`/`server` on today's

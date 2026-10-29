@@ -1,4 +1,5 @@
 import {
+  boolean,
   date,
   index,
   integer,
@@ -101,6 +102,14 @@ export const playtime = ticklog.table(
   },
   (t) => [primaryKey({ columns: [t.uuid, t.day, t.kind, t.server] })],
 );
+
+// Server addresses the mod reported, checked with a server list ping. Only
+// reachable ones are listed on profiles and get an icon.
+export const servers = ticklog.table("servers", {
+  address: text().primaryKey(),
+  reachable: boolean().notNull(),
+  checkedAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+});
 
 // Legacy Microsoft-only sessions, kept to attach existing users on their
 // first Discord login.
