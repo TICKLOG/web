@@ -1,4 +1,5 @@
 import {
+  date,
   index,
   integer,
   pgSchema,
@@ -66,6 +67,39 @@ export const playerCapes = ticklog.table(
     seenAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [primaryKey({ columns: [t.uuid, t.hash] })],
+);
+
+// Pending mod logins: the mod asks for a server id, joins it through Mojang's
+// session server, then trades it for a token. Single use, short-lived.
+export const modChallenges = ticklog.table("mod_challenges", {
+  serverId: text().primaryKey(),
+  uuid: uuid().notNull(),
+  name: text().notNull(),
+  createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+});
+
+// One mod session per Minecraft account; a new game start replaces the old
+// token, so two clients can't count time at once.
+export const modSessions = ticklog.table("mod_sessions", {
+  uuid: uuid().primaryKey(),
+  // SHA-256 of the token; the token itself only lives in the game.
+  tokenHash: text().notNull().unique(),
+  lastBeatAt: timestamp({ withTimezone: true }),
+  createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+});
+
+// Seconds played per player, UTC day and place. `kind` is launcher,
+// singleplayer or server; `server` is the address for servers, else "".
+export const playtime = ticklog.table(
+  "playtime",
+  {
+    uuid: uuid().notNull(),
+    day: date().notNull(),
+    kind: text().notNull(),
+    server: text().notNull().default(""),
+    seconds: integer().notNull().default(0),
+  },
+  (t) => [primaryKey({ columns: [t.uuid, t.day, t.kind, t.server] })],
 );
 
 // Legacy Microsoft-only sessions, kept to attach existing users on their

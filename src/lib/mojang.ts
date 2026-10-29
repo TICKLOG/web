@@ -2,7 +2,12 @@ import { cache } from "react";
 
 // Minecraft names: 3–16 letters, digits or underscores (some old accounts
 // have shorter ones, so 1 is allowed).
-const NAME = /^[A-Za-z0-9_]{1,16}$/;
+export const NAME = /^[A-Za-z0-9_]{1,16}$/;
+
+// Mojang's 32-digit ids with dashes, like everywhere in our database.
+export function dashUuid(id: string) {
+  return `${id.slice(0, 8)}-${id.slice(8, 12)}-${id.slice(12, 16)}-${id.slice(16, 20)}-${id.slice(20)}`;
+}
 
 export type MojangProfile = { uuid: string; name: string };
 
@@ -13,9 +18,7 @@ export const lookupPlayer = cache(async (name: string): Promise<MojangProfile | 
   const res = await fetch(`https://api.mojang.com/users/profiles/minecraft/${name}`, { cache: "no-store" });
   if (!res.ok) return null;
   const profile = (await res.json()) as { id: string; name: string };
-  const id = profile.id;
-  const uuid = `${id.slice(0, 8)}-${id.slice(8, 12)}-${id.slice(12, 16)}-${id.slice(16, 20)}-${id.slice(20)}`;
-  return { uuid, name: profile.name };
+  return { uuid: dashUuid(profile.id), name: profile.name };
 });
 
 export type SkinTextures = { skin: string; cape: string | null; model: "slim" | "default" };

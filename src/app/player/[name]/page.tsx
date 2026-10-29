@@ -15,6 +15,7 @@ import { BADGES } from "@/lib/badges";
 import { loadCapes, rememberCape } from "@/lib/capes";
 import { locatorColor } from "@/lib/minecraft";
 import { fetchTextures, lookupPlayer } from "@/lib/mojang";
+import { loadBreakdown, loadDays } from "@/lib/playtime";
 
 const rise =
   "animate-[rise_300ms_ease-out_backwards] motion-reduce:animate-none";
@@ -59,10 +60,12 @@ export default async function PlayerPage({
         subtitle={`No Minecraft player is named ${name}.`}
       />
     );
-  const [linked, textures, badges] = await Promise.all([
+  const [linked, textures, badges, days, breakdown] = await Promise.all([
     isLinked(profile.uuid),
     fetchTextures(profile.uuid),
     loadBadges(profile.uuid),
+    loadDays(profile.uuid),
+    loadBreakdown(profile.uuid),
   ]);
   const color = locatorColor(profile.uuid);
   // Searched players keep every cape they were seen wearing.
@@ -125,16 +128,14 @@ export default async function PlayerPage({
 
         {/* As tall as the skin box (480px canvas plus its border). */}
         <div className="flex h-[482px] w-fit min-w-0 flex-col gap-4">
-          {/* Empty until the mod sends playtime. */}
           <Heatmap
-            data={new Map()}
+            data={days}
             accent={color}
             className={`max-w-full min-w-0 ${rise} [animation-delay:150ms]`}
           />
-          {/* Empty until the mod sends playtime. */}
           <Breakdown
             accent={color}
-            data={{ server: 0, singleplayer: 0, launcher: 0, servers: [] }}
+            data={breakdown}
             className={`min-h-0 flex-1 ${rise} [animation-delay:200ms]`}
           />
         </div>
