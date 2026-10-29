@@ -74,15 +74,15 @@ export function AccountsNav({ accounts }: { accounts: NavAccount[] }) {
             // Marked only while its page is open.
             const isActive = pathname === href;
             // The tree line from the top down to the selected account is drawn
-            // in the heading color (black in light mode, white in dark mode).
+            // in the icon color (dark gray in light mode, light gray in dark mode).
             const line = isActive
-              ? { "--branch": "var(--heading)" }
+              ? { "--branch": "var(--icon)" }
               : all
                     .slice(i + 1)
                     .some(
                       (a) => pathname === `/accounts/${a.name.toLowerCase()}`,
                     )
-                ? { "--trunk": "var(--heading)" }
+                ? { "--trunk": "var(--icon)" }
                 : undefined;
             return (
               <li
@@ -139,7 +139,7 @@ export function AccountsNav({ accounts }: { accounts: NavAccount[] }) {
                     style={
                       isActive
                         ? {
-                            outline: "1.5px solid var(--heading)",
+                            outline: "1.5px solid var(--icon)",
                             outlineOffset: "1.5px",
                           }
                         : undefined
