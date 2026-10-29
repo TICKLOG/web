@@ -28,10 +28,10 @@ export function AccountSettings({
     <>
       <SettingsSection
         title="Hide Profile"
-        description="Your player page only shows your name, skin, capes and badges."
+        description="Nobody can see your player page."
         delay={70}
       >
-        <SettingsRow text="Hide playtime, activity, streak and servers.">
+        <SettingsRow text="Your player page only says that this profile is private.">
           <Switch
             label="Hide Profile"
             checked={profileHidden}

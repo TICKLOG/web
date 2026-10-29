@@ -76,21 +76,24 @@ export default async function PlayerPage({
         subtitle={`No Minecraft player is named ${name}.`}
       />
     );
-  const [linked, textures, badges, liking, hidden] = await Promise.all([
-    isLinked(profile.uuid),
-    fetchTextures(profile.uuid),
-    loadBadges(profile.uuid),
-    loadLikes(profile.uuid),
-    isProfileHidden(profile.uuid),
-  ]);
-  // Hidden profiles (account setting) show no playtime at all.
-  const [days, breakdown, streak] = hidden
-    ? [null, null, 0]
-    : await Promise.all([
-        loadDays(profile.uuid),
-        loadBreakdown(profile.uuid),
-        loadStreak(profile.uuid),
-      ]);
+  // Hidden in the account settings: nothing but this note.
+  if (await isProfileHidden(profile.uuid))
+    return (
+      <ComingSoon
+        title="This Profile Is Private"
+        subtitle={`${profile.name} has hidden their profile.`}
+      />
+    );
+  const [linked, textures, badges, liking, days, breakdown, streak] =
+    await Promise.all([
+      isLinked(profile.uuid),
+      fetchTextures(profile.uuid),
+      loadBadges(profile.uuid),
+      loadLikes(profile.uuid),
+      loadDays(profile.uuid),
+      loadBreakdown(profile.uuid),
+      loadStreak(profile.uuid),
+    ]);
   const color = locatorColor(profile.uuid);
   // Searched players keep every cape they were seen wearing.
   if (textures?.cape)
@@ -160,26 +163,18 @@ export default async function PlayerPage({
           </CapePreviewProvider>
 
           {/* As tall as the skin box (480px canvas plus its border). */}
-          {days && breakdown ? (
-            <div className="flex h-[482px] w-fit min-w-0 flex-col gap-4">
-              <Heatmap
-                data={days}
-                accent={color}
-                className={`max-w-full min-w-0 ${rise} [animation-delay:150ms]`}
-              />
-              <Breakdown
-                accent={color}
-                data={breakdown}
-                className={`min-h-0 flex-1 ${rise} [animation-delay:200ms]`}
-              />
-            </div>
-          ) : (
-            <div
-              className={`flex h-[482px] w-[600px] max-w-full min-w-0 items-center justify-center rounded-[12px] border border-search-border bg-search text-[14px] text-search-text ${rise} [animation-delay:150ms]`}
-            >
-              This profile is hidden.
-            </div>
-          )}
+          <div className="flex h-[482px] w-fit min-w-0 flex-col gap-4">
+            <Heatmap
+              data={days}
+              accent={color}
+              className={`max-w-full min-w-0 ${rise} [animation-delay:150ms]`}
+            />
+            <Breakdown
+              accent={color}
+              data={breakdown}
+              className={`min-h-0 flex-1 ${rise} [animation-delay:200ms]`}
+            />
+          </div>
         </div>
       </div>
     </main>
