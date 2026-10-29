@@ -43,8 +43,8 @@ const LINK_FIELDS = [
   {
     key: "discord",
     label: "Discord",
-    prefix: "",
-    placeholder: "username",
+    prefix: "discord.gg/",
+    placeholder: "invite",
     icon: <DiscordIcon className="size-4 text-[#5865f2]" />,
   },
 ] as const;

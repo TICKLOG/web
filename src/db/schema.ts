@@ -131,7 +131,7 @@ export const playerSettings = ticklog.table("player_settings", {
   // Player page shows no playtime, streak or servers.
   hidden: boolean().notNull().default(false),
   // Links on the player page: Twitch, YouTube and X names (no @) and a
-  // Discord username.
+  // Discord server invite code.
   twitch: text(),
   youtube: text(),
   x: text(),

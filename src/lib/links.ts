@@ -43,9 +43,10 @@ export function parseX(input: string) {
   return /^[A-Za-z0-9_]{1,15}$/.test(s) ? s : null;
 }
 
-// Discord usernames: 2–32 lowercase letters, digits, dots or underscores.
+// discord.gg/<invite>: the code of a Discord server invite (2–32 letters,
+// digits or dashes).
 export function parseDiscord(input: string) {
-  const s = input.trim().replace(/^@/, "").toLowerCase();
+  const s = strip(input, ["discord.gg/", "discord.com/invite/", "discordapp.com/invite/"]);
   if (!s) return "";
-  return /^[a-z0-9._]{2,32}$/.test(s) ? s : null;
+  return /^[A-Za-z0-9-]{2,32}$/.test(s) ? s : null;
 }

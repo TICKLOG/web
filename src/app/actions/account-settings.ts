@@ -40,7 +40,7 @@ const INVALID = {
   twitch: "That's not a Twitch channel.",
   youtube: "That's not a YouTube handle.",
   x: "That's not an X handle.",
-  discord: "That's not a Discord username.",
+  discord: "That's not a Discord invite.",
 };
 
 // Saves one link (saved as you type); returns the stored name or an error.
