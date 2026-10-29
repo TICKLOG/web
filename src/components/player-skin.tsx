@@ -9,10 +9,36 @@ import {
 } from "skinview3d";
 import type { SkinTextures } from "@/lib/mojang";
 import { capeTextureUrl, useCapePreview } from "./cape-preview";
+import { Icon } from "./icon";
 
 // Resting rotation: turned slightly to the side.
 const BASE = -0.45;
 const PLACEHOLDER_SKIN = "/placeholder-skin.png";
+
+// Icons for the cape/elytra switch.
+const EQUIPMENT = [
+  {
+    id: "cape",
+    label: "Cape",
+    icon: (
+      <>
+        <path d="M4 7c2-2.5 5-4 8-4s6 1.5 8 4" />
+        <path d="M6 5.5 5 21h14L18 5.5" />
+        <path d="M12 3v4" />
+      </>
+    ),
+  },
+  {
+    id: "elytra",
+    label: "Elytra",
+    icon: (
+      <>
+        <path d="M11 7C9 5 6 4 2 4c0 5 2 10 6 15l1.5-3 1.5 2Z" />
+        <path d="M13 7c2-2 5-3 9-3 0 5-2 10-6 15l-1.5-3-1.5 2Z" />
+      </>
+    ),
+  },
+] as const;
 
 // Idle pose with arms out a little, legs shifting and the head looking around.
 class BreatheAnimation extends IdleAnimation {
@@ -154,19 +180,20 @@ export function PlayerSkin({
     <>
       {cape && (
         <div className="absolute top-3 right-3 z-30 flex h-8 items-center gap-0.5 rounded-[8px] border border-search-border bg-background p-0.5">
-          {(["cape", "elytra"] as const).map((e) => (
+          {EQUIPMENT.map((e) => (
             <button
-              key={e}
+              key={e.id}
               type="button"
-              aria-pressed={equipment === e}
-              onClick={() => setEquipment(e)}
-              className={`h-full cursor-pointer rounded-[6px] px-2.5 text-[12px] font-medium transition-colors ${
-                equipment === e
+              aria-label={e.label}
+              aria-pressed={equipment === e.id}
+              onClick={() => setEquipment(e.id)}
+              className={`flex h-full cursor-pointer items-center rounded-[6px] px-2 transition-colors ${
+                equipment === e.id
                   ? "bg-search-border text-heading"
                   : "text-nav-text hover:text-heading"
               }`}
             >
-              {e === "cape" ? "Cape" : "Elytra"}
+              <Icon className="size-4">{e.icon}</Icon>
             </button>
           ))}
         </div>
