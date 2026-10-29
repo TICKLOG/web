@@ -124,6 +124,24 @@ export const likes = ticklog.table(
   (t) => [primaryKey({ columns: [t.uuid, t.userId] })],
 );
 
+// Privacy settings per Minecraft player, set by whoever has the account
+// linked. Kept by UUID, so they survive unlinking.
+export const playerSettings = ticklog.table("player_settings", {
+  uuid: uuid().primaryKey(),
+  // Player page shows no playtime, streak or servers.
+  hidden: boolean().notNull().default(false),
+});
+
+// Servers a player keeps off their top servers (the time still counts).
+export const hiddenServers = ticklog.table(
+  "hidden_servers",
+  {
+    uuid: uuid().notNull(),
+    server: text().notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.uuid, t.server] })],
+);
+
 // Legacy Microsoft-only sessions, kept to attach existing users on their
 // first Discord login.
 export const sessions = ticklog.table(

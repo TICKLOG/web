@@ -1,8 +1,8 @@
 import { createHash } from "node:crypto";
 import { isIP } from "node:net";
-import { and, desc, eq, gte, ne, sql } from "drizzle-orm";
+import { and, desc, eq, gte, ne, notExists, sql } from "drizzle-orm";
 import { db } from "@/db";
-import { modSessions, playtime, servers } from "@/db/schema";
+import { hiddenServers, modSessions, playerSettings, playtime, servers } from "@/db/schema";
 import { pingStatus } from "@/lib/server-ping";
 import type { BreakdownData } from "@/components/breakdown";
 
@@ -139,7 +139,19 @@ export async function loadBreakdown(uuid: string): Promise<BreakdownData> {
     db
       .select({ server: playtime.server, seconds: total })
       .from(playtime)
-      .where(and(eq(playtime.uuid, uuid), eq(playtime.kind, "server"), ne(playtime.server, "")))
+      .where(
+        and(
+          eq(playtime.uuid, uuid),
+          eq(playtime.kind, "server"),
+          ne(playtime.server, ""),
+          notExists(
+            db
+              .select()
+              .from(hiddenServers)
+              .where(and(eq(hiddenServers.uuid, uuid), eq(hiddenServers.server, playtime.server))),
+          ),
+        ),
+      )
       .groupBy(playtime.server)
       .having(gte(total, 60))
       .orderBy(desc(total))
@@ -147,4 +159,31 @@ export async function loadBreakdown(uuid: string): Promise<BreakdownData> {
   ]);
   const of = (k: Kind) => kinds.find((r) => r.kind === k)?.seconds ?? 0;
   return { server: of("server"), singleplayer: of("singleplayer"), launcher: of("launcher"), servers };
+}
+
+// Every listed server of a player (at least a minute), most played first, and
+// whether the player hid it from their top servers.
+export async function loadServers(uuid: string) {
+  const total = sql<number>`sum(${playtime.seconds})::int`;
+  const [rows, hidden] = await Promise.all([
+    db
+      .select({ server: playtime.server, seconds: total })
+      .from(playtime)
+      .where(and(eq(playtime.uuid, uuid), eq(playtime.kind, "server"), ne(playtime.server, "")))
+      .groupBy(playtime.server)
+      .having(gte(total, 60))
+      .orderBy(desc(total)),
+    db.select({ server: hiddenServers.server }).from(hiddenServers).where(eq(hiddenServers.uuid, uuid)),
+  ]);
+  const off = new Set(hidden.map((h) => h.server));
+  return rows.map((r) => ({ ...r, hidden: off.has(r.server) }));
+}
+
+// Whether the player hid their profile (stats, streak and servers).
+export async function isProfileHidden(uuid: string) {
+  const [row] = await db
+    .select({ hidden: playerSettings.hidden })
+    .from(playerSettings)
+    .where(eq(playerSettings.uuid, uuid));
+  return row?.hidden ?? false;
 }
