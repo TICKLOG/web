@@ -1,5 +1,4 @@
 import { and, count, eq, isNotNull } from "drizzle-orm";
-import type { Metadata } from "next";
 import { Badges } from "@/components/badges";
 import { Breakdown } from "@/components/breakdown";
 import { CapePreviewProvider } from "@/components/cape-preview";
@@ -22,13 +21,6 @@ import { loadBreakdown, loadDays, loadStreak } from "@/lib/playtime";
 
 const rise =
   "animate-[rise_300ms_ease-out_backwards] motion-reduce:animate-none";
-
-export async function generateMetadata({
-  params,
-}: PageProps<"/player/[name]">): Promise<Metadata> {
-  const profile = await lookupPlayer((await params).name);
-  return { title: profile?.name ?? "Player Not Found" };
-}
 
 // Whether the account is linked to a TickLog user with Discord.
 async function isLinked(uuid: string) {

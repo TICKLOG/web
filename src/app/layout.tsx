@@ -20,10 +20,8 @@ export const metadata: Metadata = {
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_SITE_URL ?? "https://ticklog.net",
   ),
-  title: {
-    default: "TickLog",
-    template: "%s | TickLog",
-  },
+  // Every page is just "TickLog" in the browser tab.
+  title: "TickLog",
   description: "Track your lifetime Minecraft stats.",
 };
 

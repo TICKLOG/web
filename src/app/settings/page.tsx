@@ -1,10 +1,7 @@
-import type { Metadata } from "next";
 import { DeleteAccount } from "@/components/delete-account";
 import { PageHeader } from "@/components/page-header";
 import { ThemePicker } from "@/components/theme";
 import { getCurrentUser } from "@/lib/auth/user";
-
-export const metadata: Metadata = { title: "Settings" };
 
 // The page builds up block by block (staggered by `delay`).
 const rise = "animate-[rise_300ms_ease-out_backwards] motion-reduce:animate-none";

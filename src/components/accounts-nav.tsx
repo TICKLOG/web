@@ -26,7 +26,7 @@ function MicrosoftLogo() {
 // Curved connector from the vertical line to each row, like the reference
 // design; the line continues past every row but the last.
 const branch =
-  "relative before:pointer-events-none before:absolute before:top-0 before:-left-4 before:h-1/2 before:w-3 before:rounded-bl-[6px] before:border-b before:border-l before:border-[var(--divider)] not-last:after:pointer-events-none not-last:after:absolute not-last:after:top-0 not-last:after:-bottom-0.5 not-last:after:-left-4 not-last:after:border-l not-last:after:border-[var(--divider)] collapsed:before:hidden collapsed:after:hidden";
+  "relative before:pointer-events-none before:absolute before:top-0 before:-left-4 before:h-1/2 before:w-3 before:rounded-bl-[6px] before:border-b before:border-l before:border-[var(--branch,var(--divider))] not-last:after:pointer-events-none not-last:after:absolute not-last:after:top-0 not-last:after:-bottom-0.5 not-last:after:-left-4 not-last:after:border-l not-last:after:border-[var(--divider)] collapsed:before:hidden collapsed:after:hidden";
 
 const subItem =
   "flex h-9 w-full cursor-pointer items-center gap-2.5 rounded-[8px] px-2.5 text-left text-[14px] transition-colors collapsed:px-3";
@@ -73,6 +73,8 @@ export function AccountsNav({ accounts }: { accounts: NavAccount[] }) {
             return (
               <li
                 key={account.uuid}
+                // Selected account: its tree branch and a ring around the head in the player's locator color.
+                style={isActive ? ({ "--branch": locatorColor(account.uuid) } as React.CSSProperties) : undefined}
                 draggable
                 onDragStart={(e) => {
                   e.dataTransfer.effectAllowed = "move";
@@ -108,14 +110,6 @@ export function AccountsNav({ accounts }: { accounts: NavAccount[] }) {
                   title={account.name}
                   className={`${subItem} min-w-0 flex-1 ${isActive ? "font-semibold text-heading" : "text-nav-text hover:text-heading"}`}
                 >
-                  {/* Selected account: a bar and a ring around the head in the player's locator color. */}
-                  {isActive && (
-                    <span
-                      aria-hidden="true"
-                      className="absolute inset-y-2 left-0 w-[3px] rounded-full collapsed:hidden"
-                      style={{ backgroundColor: locatorColor(account.uuid) }}
-                    />
-                  )}
                   <Image
                     src={`/heads/${account.uuid}.png`}
                     alt=""
