@@ -1,0 +1,1 @@
+ALTER TABLE "ticklog"."minecraft_accounts" ADD COLUMN "position" integer DEFAULT 0 NOT NULL;

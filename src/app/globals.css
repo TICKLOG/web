@@ -1,0 +1,96 @@
+@import "tailwindcss";
+
+/* `dark:` follows the data-theme attribute instead of the OS setting. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+@custom-variant light (&:where([data-theme="light"], [data-theme="light"] *));
+/* `collapsed:` applies while the sidebar is collapsed, and while it expands
+   ("expanding"), so labels only appear once it has its full width. */
+@custom-variant collapsed (&:where([data-sidebar="collapsed"] *, [data-sidebar="expanding"] *));
+@custom-variant expanding (&:where([data-sidebar="expanding"] *));
+
+/* Light tokens; dark (OLED, the default via data-theme="dark") overrides them. */
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --muted: #666666;
+  --hover: rgb(0 0 0 / 0.04);
+  --border: #f0f0f0;
+  --divider: #e3e3e4;
+  --heading: #000000;
+  --logo-filter: brightness(0);
+  --search: #ffffff;
+  --search-border: #ececed;
+  --search-text: #6c6c70;
+  --nav-active: #22232a;
+  --nav-active-text: #ffffff;
+  --nav-text: #67676b;
+  --icon: #3b3b41;
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --background: #000000;
+  --foreground: #ededed;
+  --muted: #8f8f8f;
+  --hover: rgb(255 255 255 / 0.06);
+  --border: #1a1a1a;
+  --divider: #262626;
+  --heading: #ffffff;
+  --logo-filter: brightness(0) invert(1);
+  --search: #0a0a0a;
+  --search-border: #1f1f1f;
+  --search-text: #8e8e93;
+  --nav-active: #1c1c1f;
+  --nav-active-text: #ffffff;
+  --nav-text: #8e8e93;
+  --icon: #b4b4b8;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-hover: var(--hover);
+  --color-border: var(--border);
+  --color-heading: var(--heading);
+  --color-search: var(--search);
+  --color-search-border: var(--search-border);
+  --color-search-text: var(--search-text);
+  --color-nav-active: var(--nav-active);
+  --color-nav-active-text: var(--nav-active-text);
+  --color-nav-text: var(--nav-text);
+  --color-icon: var(--icon);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-minecraft: "Minecraft", monospace;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+/* Build-up animation for menus and pages: fade in while rising slightly.
+   Used with a staggered animation-delay per item. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+/* Leaderboard bars grow in from the left. */
+@keyframes grow {
+  from {
+    width: 0;
+  }
+}
+
+/* Pixel font for leaderboard ranks. */
+@font-face {
+  font-family: "Minecraft";
+  src: url("/fonts/minecraft.woff2") format("woff2");
+  font-display: swap;
+}
