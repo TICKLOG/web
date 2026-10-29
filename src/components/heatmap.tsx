@@ -69,7 +69,13 @@ export function Heatmap({
       <div className="flex items-baseline justify-between">
         <p className="text-[12px] font-semibold tracking-wider text-search-text uppercase">Activity</p>
         <p className="text-[12px] text-search-text">
-          <span className="font-semibold text-heading">{formatDuration(total)}</span> in the last year
+          {total > 0 ? (
+            <>
+              <span className="font-semibold text-heading">{formatDuration(total)}</span> in the last year
+            </>
+          ) : (
+            "No data yet"
+          )}
         </p>
       </div>
       <ScrollEnd className="mt-4 flex gap-2 pb-1">

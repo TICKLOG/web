@@ -1,5 +1,6 @@
-// "45 min", "3h 20m" or "12d 4h".
+// "30 sec", "45 min", "3h 20m" or "12d 4h".
 export function formatDuration(seconds: number) {
+  if (seconds < 60) return `${Math.round(seconds)} sec`;
   const m = Math.round(seconds / 60);
   if (m < 60) return `${m} min`;
   const h = Math.floor(m / 60);
