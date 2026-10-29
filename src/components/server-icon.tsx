@@ -42,7 +42,7 @@ export function ServerIcon({
       width={size}
       height={size}
       alt=""
-      className="shrink-0 rounded-[3px] [image-rendering:pixelated]"
+      className="shrink-0 rounded-[4px]"
       onError={() => setFailed(true)}
     />
   );

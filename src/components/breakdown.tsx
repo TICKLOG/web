@@ -113,7 +113,7 @@ export function Breakdown({
               <span
                 className={`flex w-56 items-center gap-2 font-mono ${s ? "text-heading" : "text-search-border"}`}
               >
-                <ServerIcon server={s?.server ?? null} dim={!s} />
+                <ServerIcon server={s?.server ?? null} size={20} dim={!s} />
                 <span className="truncate">{s ? s.server : NO_DATA}</span>
               </span>
               <span className="relative h-1.5 flex-1 rounded-full bg-search-border">
