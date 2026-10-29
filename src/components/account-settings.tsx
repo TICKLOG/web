@@ -28,10 +28,10 @@ export function AccountSettings({
     <>
       <SettingsSection
         title="Hide Profile"
-        description="Nobody can see your player page."
+        description="Nobody can see your playtime."
         delay={70}
       >
-        <SettingsRow text="Your player page only says that this profile is private.">
+        <SettingsRow text="Your stats show as hidden on your player page.">
           <Switch
             label="Hide Profile"
             checked={profileHidden}
@@ -78,7 +78,7 @@ export function AccountSettings({
       </SettingsSection>
 
       <SettingsSection title="Reset Playtime" description="This removes all playtime tracked for this account." delay={210}>
-        <SettingsRow text="Permanently delete the playtime of this account. Tracking starts again from zero.">
+        <SettingsRow text="Permanently delete the playtime of this account.">
           <DangerButton
             label="Reset Playtime"
             confirmLabel="Confirm Reset"

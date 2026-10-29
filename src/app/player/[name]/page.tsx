@@ -76,24 +76,26 @@ export default async function PlayerPage({
         subtitle={`No Minecraft player is named ${name}.`}
       />
     );
-  // Hidden in the account settings: nothing but this note.
-  if (await isProfileHidden(profile.uuid))
-    return (
-      <ComingSoon
-        title="Private Profile"
-        subtitle={`${profile.name} has hidden their profile.`}
-      />
-    );
-  const [linked, textures, badges, liking, days, breakdown, streak] =
-    await Promise.all([
-      isLinked(profile.uuid),
-      fetchTextures(profile.uuid),
-      loadBadges(profile.uuid),
-      loadLikes(profile.uuid),
-      loadDays(profile.uuid),
-      loadBreakdown(profile.uuid),
-      loadStreak(profile.uuid),
-    ]);
+  const [linked, textures, badges, liking, hidden] = await Promise.all([
+    isLinked(profile.uuid),
+    fetchTextures(profile.uuid),
+    loadBadges(profile.uuid),
+    loadLikes(profile.uuid),
+    isProfileHidden(profile.uuid),
+  ]);
+  // Private profiles (account setting) show "Hidden" instead of playtime.
+  const [days, breakdown, streak] = hidden
+    ? [
+        new Map<string, number>(),
+        { server: 0, singleplayer: 0, launcher: 0, servers: [] },
+        0,
+      ]
+    : await Promise.all([
+        loadDays(profile.uuid),
+        loadBreakdown(profile.uuid),
+        loadStreak(profile.uuid),
+      ]);
+  const emptyText = hidden ? "Hidden" : undefined;
   const color = locatorColor(profile.uuid);
   // Searched players keep every cape they were seen wearing.
   if (textures?.cape)
@@ -167,11 +169,13 @@ export default async function PlayerPage({
             <Heatmap
               data={days}
               accent={color}
+              emptyText={emptyText}
               className={`max-w-full min-w-0 ${rise} [animation-delay:150ms]`}
             />
             <Breakdown
               accent={color}
               data={breakdown}
+              emptyText={emptyText}
               className={`min-h-0 flex-1 ${rise} [animation-delay:200ms]`}
             />
           </div>

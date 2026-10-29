@@ -17,14 +17,17 @@ function level(seconds: number) {
 }
 
 // Playtime per day over the last year, in the player's locator color.
-// `data` maps "YYYY-MM-DD" to seconds.
+// `data` maps "YYYY-MM-DD" to seconds; `emptyText` shows when there's none
+// ("Hidden" on private profiles).
 export function Heatmap({
   data,
   accent,
+  emptyText = "No data yet",
   className = "",
 }: {
   data: Map<string, number>;
   accent: string;
+  emptyText?: string;
   className?: string;
 }) {
   // Days are UTC, like the playtime the mod sends.
@@ -76,7 +79,7 @@ export function Heatmap({
               <span className="font-semibold text-heading">{formatDuration(total)}</span> in the last year
             </>
           ) : (
-            "No data yet"
+            emptyText
           )}
         </p>
       </div>

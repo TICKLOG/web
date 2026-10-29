@@ -10,16 +10,16 @@ export type BreakdownData = {
   servers: { server: string; seconds: number }[];
 };
 
-const NO_DATA = "No data yet";
-
 function Tile({
   icon,
   label,
   seconds,
+  emptyText,
 }: {
   icon: React.ReactNode;
   label: string;
   seconds: number;
+  emptyText: string;
 }) {
   const empty = seconds < 60;
   return (
@@ -33,21 +33,24 @@ function Tile({
       <p
         className={`mt-1 text-[18px] font-semibold tabular-nums ${empty ? "text-search-border" : "text-heading"}`}
       >
-        {empty ? NO_DATA : formatDuration(seconds)}
+        {empty ? emptyText : formatDuration(seconds)}
       </p>
     </div>
   );
 }
 
 // Where the player plays (servers, singleplayer, just the launcher) and their
-// top three servers, like on the old site.
+// top three servers, like on the old site. `emptyText` stands in for missing
+// values ("Hidden" on private profiles).
 export function Breakdown({
   data,
   accent,
+  emptyText = "No data yet",
   className = "",
 }: {
   data: BreakdownData;
   accent: string;
+  emptyText?: string;
   className?: string;
 }) {
   const max = Math.max(1, ...data.servers.map((s) => s.seconds));
@@ -62,6 +65,7 @@ export function Breakdown({
         <Tile
           label="Servers"
           seconds={data.server}
+          emptyText={emptyText}
           icon={
             <>
               <rect width="20" height="8" x="2" y="2" rx="2" ry="2" />
@@ -74,6 +78,7 @@ export function Breakdown({
         <Tile
           label="Singleplayer"
           seconds={data.singleplayer}
+          emptyText={emptyText}
           icon={
             <>
               <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
@@ -84,6 +89,7 @@ export function Breakdown({
         <Tile
           label="Launcher"
           seconds={data.launcher}
+          emptyText={emptyText}
           icon={
             <>
               <line x1="6" x2="10" y1="11" y2="11" />
@@ -113,7 +119,7 @@ export function Breakdown({
                 className={`flex w-56 items-center gap-2 font-mono ${s ? "text-heading" : "text-search-border"}`}
               >
                 <ServerIcon server={s?.server ?? null} size={20} dim={!s} />
-                <span className="truncate">{s ? s.server : NO_DATA}</span>
+                <span className="truncate">{s ? s.server : emptyText}</span>
               </span>
               <span className="relative h-1.5 flex-1 rounded-full bg-search-border">
                 {s && (
