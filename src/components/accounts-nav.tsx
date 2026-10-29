@@ -5,7 +5,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useOptimistic, useState, useTransition } from "react";
 import { reorderAccounts, unlinkAccount } from "@/app/actions/accounts";
-import { locatorColor } from "@/lib/minecraft";
 import { Icon } from "./icon";
 import { NavDivider } from "./nav-item";
 import { setSidebarCollapsed } from "./sidebar-controls";
@@ -26,7 +25,7 @@ function MicrosoftLogo() {
 // Curved connector from the vertical line to each row, like the reference
 // design; the line continues past every row but the last.
 const branch =
-  "relative before:pointer-events-none before:absolute before:top-0 before:-left-4 before:h-1/2 before:w-3 before:rounded-bl-[6px] before:border-b before:border-l before:border-[var(--branch,var(--divider))] not-last:after:pointer-events-none not-last:after:absolute not-last:after:top-0 not-last:after:-bottom-0.5 not-last:after:-left-4 not-last:after:border-l not-last:after:border-[var(--divider)] collapsed:before:hidden collapsed:after:hidden";
+  "relative before:pointer-events-none before:absolute before:top-0 before:-left-4 before:h-1/2 before:w-3 before:rounded-bl-[6px] before:border-b before:border-l before:border-[var(--branch,var(--divider))] not-last:after:pointer-events-none not-last:after:absolute not-last:after:top-0 not-last:after:-bottom-0.5 not-last:after:-left-4 not-last:after:border-l not-last:after:border-[var(--trunk,var(--divider))] collapsed:before:hidden collapsed:after:hidden";
 
 const subItem =
   "flex h-9 w-full cursor-pointer items-center gap-2.5 rounded-[8px] px-2.5 text-left text-[14px] transition-colors collapsed:px-3";
@@ -36,7 +35,10 @@ export function AccountsNav({ accounts }: { accounts: NavAccount[] }) {
   const pathname = usePathname();
   const [optimisticAccounts, setOptimisticAccounts] = useOptimistic(accounts);
   // While dragging: the account being moved and the order shown meanwhile.
-  const [drag, setDrag] = useState<{ uuid: string; order: NavAccount[] } | null>(null);
+  const [drag, setDrag] = useState<{
+    uuid: string;
+    order: NavAccount[];
+  } | null>(null);
   const list = drag?.order ?? optimisticAccounts;
   const [, startTransition] = useTransition();
 
@@ -49,7 +51,8 @@ export function AccountsNav({ accounts }: { accounts: NavAccount[] }) {
           type="button"
           title="Accounts"
           onClick={() => {
-            if (document.documentElement.dataset.sidebar === "collapsed") setSidebarCollapsed(false);
+            if (document.documentElement.dataset.sidebar === "collapsed")
+              setSidebarCollapsed(false);
           }}
           className="flex h-10 w-full cursor-default items-center gap-2.5 rounded-[10px] px-3 text-[15px] text-nav-text transition-colors collapsed:cursor-pointer collapsed:hover:bg-hover collapsed:hover:text-heading"
         >
@@ -66,15 +69,25 @@ export function AccountsNav({ accounts }: { accounts: NavAccount[] }) {
         {/* Collapsed sidebar: only the heads (and the Microsoft logo) remain, on
             the icon axis in 44px rows, also while it expands. */}
         <ul className="mt-1 ml-[21px] flex flex-col gap-0.5 pl-4 collapsed:ml-0 collapsed:pl-0">
-          {list.map((account) => {
+          {list.map((account, i, all) => {
             const href = `/accounts/${account.name.toLowerCase()}`;
             // Marked only while its page is open.
             const isActive = pathname === href;
+            // The tree line from the top down to the selected account is drawn
+            // in the heading color (black in light mode, white in dark mode).
+            const line = isActive
+              ? { "--branch": "var(--heading)" }
+              : all
+                    .slice(i + 1)
+                    .some(
+                      (a) => pathname === `/accounts/${a.name.toLowerCase()}`,
+                    )
+                ? { "--trunk": "var(--heading)" }
+                : undefined;
             return (
               <li
                 key={account.uuid}
-                // Selected account: its tree branch and a ring around the head in the player's locator color.
-                style={isActive ? ({ "--branch": locatorColor(account.uuid) } as React.CSSProperties) : undefined}
+                style={line as React.CSSProperties | undefined}
                 draggable
                 onDragStart={(e) => {
                   e.dataTransfer.effectAllowed = "move";
@@ -95,7 +108,12 @@ export function AccountsNav({ accounts }: { accounts: NavAccount[] }) {
                   if (!drag) return;
                   const order = drag.order;
                   setDrag(null);
-                  if (order.every((a, i) => a.uuid === optimisticAccounts[i]?.uuid)) return;
+                  if (
+                    order.every(
+                      (a, i) => a.uuid === optimisticAccounts[i]?.uuid,
+                    )
+                  )
+                    return;
                   startTransition(async () => {
                     setOptimisticAccounts(order);
                     await reorderAccounts(order.map((a) => a.uuid));
@@ -120,11 +138,16 @@ export function AccountsNav({ accounts }: { accounts: NavAccount[] }) {
                     className="size-5 max-w-none shrink-0 rounded-[4px] [image-rendering:pixelated]"
                     style={
                       isActive
-                        ? { outline: `1.5px solid ${locatorColor(account.uuid)}`, outlineOffset: "1.5px" }
+                        ? {
+                            outline: "1.5px solid var(--heading)",
+                            outlineOffset: "1.5px",
+                          }
                         : undefined
                     }
                   />
-                  <span className="truncate collapsed:hidden">{account.name}</span>
+                  <span className="truncate collapsed:hidden">
+                    {account.name}
+                  </span>
                 </Link>
                 <Link
                   href={`/player/${account.name.toLowerCase()}`}
@@ -144,7 +167,9 @@ export function AccountsNav({ accounts }: { accounts: NavAccount[] }) {
                   type="button"
                   aria-label={`Unlink ${account.name}`}
                   title={`Unlink ${account.name}`}
-                  onClick={() => startTransition(() => unlinkAccount(account.uuid))}
+                  onClick={() =>
+                    startTransition(() => unlinkAccount(account.uuid))
+                  }
                   className="mr-1 flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-[6px] text-search-text opacity-0 transition-colors group-hover/row:opacity-100 hover:text-red-500 focus-visible:opacity-100 collapsed:hidden"
                 >
                   {/* Lucide "unlink" */}
@@ -170,7 +195,9 @@ export function AccountsNav({ accounts }: { accounts: NavAccount[] }) {
               <span className="flex size-5 items-center justify-center">
                 <MicrosoftLogo />
               </span>
-              <span className="whitespace-nowrap collapsed:hidden">Add Account</span>
+              <span className="whitespace-nowrap collapsed:hidden">
+                Add Account
+              </span>
             </a>
           </li>
         </ul>
