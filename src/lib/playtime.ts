@@ -179,11 +179,16 @@ export async function loadServers(uuid: string) {
   return rows.map((r) => ({ ...r, hidden: off.has(r.server) }));
 }
 
-// Whether the player hid their profile (stats, streak and servers).
-export async function isProfileHidden(uuid: string) {
+// Account settings shown on the player page: hidden profile and links.
+export async function loadPlayerSettings(uuid: string) {
   const [row] = await db
-    .select({ hidden: playerSettings.hidden })
+    .select({
+      hidden: playerSettings.hidden,
+      twitch: playerSettings.twitch,
+      youtube: playerSettings.youtube,
+      discord: playerSettings.discord,
+    })
     .from(playerSettings)
     .where(eq(playerSettings.uuid, uuid));
-  return row?.hidden ?? false;
+  return row ?? { hidden: false, twitch: null, youtube: null, discord: null };
 }

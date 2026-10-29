@@ -8,6 +8,7 @@ import { CopyButton } from "@/components/copy-button";
 import { Heatmap } from "@/components/heatmap";
 import { Icon } from "@/components/icon";
 import { LikeButton } from "@/components/like-button";
+import { PlayerLinks } from "@/components/player-links";
 import { PlayerSkin } from "@/components/player-skin";
 import { Streak } from "@/components/streak";
 import { db } from "@/db";
@@ -18,7 +19,7 @@ import { loadCapes, rememberCape } from "@/lib/capes";
 import { locatorColor } from "@/lib/minecraft";
 import { fetchTextures, lookupPlayer } from "@/lib/mojang";
 import {
-  isProfileHidden,
+  loadPlayerSettings,
   loadBreakdown,
   loadDays,
   loadStreak,
@@ -76,13 +77,14 @@ export default async function PlayerPage({
         subtitle={`No Minecraft player is named ${name}.`}
       />
     );
-  const [linked, textures, badges, liking, hidden] = await Promise.all([
-    isLinked(profile.uuid),
-    fetchTextures(profile.uuid),
-    loadBadges(profile.uuid),
-    loadLikes(profile.uuid),
-    isProfileHidden(profile.uuid),
-  ]);
+  const [linked, textures, badges, liking, { hidden, ...links }] =
+    await Promise.all([
+      isLinked(profile.uuid),
+      fetchTextures(profile.uuid),
+      loadBadges(profile.uuid),
+      loadLikes(profile.uuid),
+      loadPlayerSettings(profile.uuid),
+    ]);
   // Private profiles (account setting) show "Hidden" instead of playtime.
   const [days, breakdown, streak] = hidden
     ? [
@@ -126,6 +128,7 @@ export default async function PlayerPage({
           </div>
           {/* Moved down so the gap to the activity box matches the one between activity and stats (16px). */}
           <div className="flex shrink-0 translate-y-2 items-center gap-2">
+            <PlayerLinks links={links} />
             <Streak days={streak} />
             <LikeButton uuid={profile.uuid} {...liking} />
           </div>
