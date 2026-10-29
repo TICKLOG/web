@@ -27,11 +27,12 @@ export function Heatmap({
   accent: string;
   className?: string;
 }) {
+  // Days are UTC, like the playtime the mod sends.
   const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const dow = (today.getDay() + 6) % 7; // Monday = 0
+  today.setUTCHours(0, 0, 0, 0);
+  const dow = (today.getUTCDay() + 6) % 7; // Monday = 0
   const start = new Date(today);
-  start.setDate(today.getDate() - dow - (WEEKS - 1) * 7);
+  start.setUTCDate(today.getUTCDate() - dow - (WEEKS - 1) * 7);
 
   const weeks: { date: Date; seconds: number }[][] = [];
   let total = 0;
@@ -39,8 +40,8 @@ export function Heatmap({
     const col: { date: Date; seconds: number }[] = [];
     for (let d = 0; d < 7; d++) {
       const date = new Date(start);
-      date.setDate(start.getDate() + w * 7 + d);
-      const key = new Date(date.getTime() - date.getTimezoneOffset() * 60_000).toISOString().slice(0, 10);
+      date.setUTCDate(start.getUTCDate() + w * 7 + d);
+      const key = date.toISOString().slice(0, 10);
       const seconds = data.get(key) ?? 0;
       total += seconds;
       col.push({ date, seconds });
@@ -50,7 +51,7 @@ export function Heatmap({
 
   const cells: HeatCell[] = weeks.flat().map(({ date, seconds }) => ({
     key: date.toISOString(),
-    label: date.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+    label: date.toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" }),
     seconds,
     level: level(seconds),
     future: date > today,
@@ -58,8 +59,8 @@ export function Heatmap({
 
   // Month name above the first week of each month.
   const labels = weeks.map((col, i) => {
-    const m = col[0].date.getMonth();
-    const prev = i > 0 ? weeks[i - 1][0].date.getMonth() : -1;
+    const m = col[0].date.getUTCMonth();
+    const prev = i > 0 ? weeks[i - 1][0].date.getUTCMonth() : -1;
     return m !== prev && i !== 0 ? MONTHS[m] : "";
   });
 
