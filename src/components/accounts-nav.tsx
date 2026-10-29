@@ -123,6 +123,20 @@ export function AccountsNav({ accounts }: { accounts: NavAccount[] }) {
                     </Icon>
                   )}
                 </Link>
+                <Link
+                  href={`/player/${account.name.toLowerCase()}`}
+                  aria-label={`Open ${account.name}'s Player Page`}
+                  title="Open Player Page"
+                  draggable={false}
+                  className="flex size-7 shrink-0 items-center justify-center rounded-[6px] text-search-text opacity-0 transition-colors group-hover/row:opacity-100 hover:text-green-400 focus-visible:opacity-100 collapsed:hidden"
+                >
+                  {/* Lucide "external-link" */}
+                  <Icon className="size-4">
+                    <path d="M15 3h6v6" />
+                    <path d="M10 14 21 3" />
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                  </Icon>
+                </Link>
                 <button
                   type="button"
                   aria-label={`Unlink ${account.name}`}

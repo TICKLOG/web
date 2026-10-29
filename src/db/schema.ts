@@ -111,6 +111,19 @@ export const servers = ticklog.table("servers", {
   checkedAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
 });
 
+// Likes on player profiles, one per TickLog user (Discord login) and player.
+export const likes = ticklog.table(
+  "likes",
+  {
+    uuid: uuid().notNull(),
+    userId: uuid()
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [primaryKey({ columns: [t.uuid, t.userId] })],
+);
+
 // Legacy Microsoft-only sessions, kept to attach existing users on their
 // first Discord login.
 export const sessions = ticklog.table(

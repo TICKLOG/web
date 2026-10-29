@@ -111,6 +111,22 @@ export async function loadDays(uuid: string) {
   return new Map(rows.map((r) => [r.day, r.seconds]));
 }
 
+// Days in a row with at least a minute of playtime, ending today or
+// yesterday (UTC), so the streak holds until the day is over.
+export async function loadStreak(uuid: string) {
+  const [row] = await db.execute<{ days: number }>(sql`
+    with d as (
+      select day from ${playtime} where uuid = ${uuid}
+      group by day having sum(seconds) >= 60
+    ),
+    g as (select day, day - (row_number() over (order by day))::int as grp from d),
+    island as (select min(day) as a, max(day) as b from g group by grp)
+    select coalesce(max(b - a + 1), 0)::int as days from island
+    where b >= (now() at time zone 'utc')::date - 1
+  `);
+  return row?.days ?? 0;
+}
+
 // Totals per kind and the top three servers.
 export async function loadBreakdown(uuid: string): Promise<BreakdownData> {
   const total = sql<number>`sum(${playtime.seconds})::int`;
