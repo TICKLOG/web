@@ -1,11 +1,20 @@
 // Social links on player pages. Input may be a name or a full channel URL;
 // stored is just the name. "" clears a link, null means invalid.
 
-export type Links = { twitch: string | null; youtube: string | null; discord: string | null };
+export type Links = {
+  twitch: string | null;
+  youtube: string | null;
+  x: string | null;
+  discord: string | null;
+};
 
 function strip(input: string, hosts: string[]) {
-  let s = input.trim().replace(/^https?:\/\//i, "").replace(/^www\./i, "");
-  for (const h of hosts) if (s.toLowerCase().startsWith(h)) s = s.slice(h.length);
+  let s = input
+    .trim()
+    .replace(/^https?:\/\//i, "")
+    .replace(/^www\./i, "");
+  for (const h of hosts)
+    if (s.toLowerCase().startsWith(h)) s = s.slice(h.length);
   return s.replace(/[/?#].*$/, "");
 }
 
@@ -21,6 +30,17 @@ export function parseYoutube(input: string) {
   const s = strip(input, ["youtube.com/", "m.youtube.com/"]).replace(/^@/, "");
   if (!s) return "";
   return /^[A-Za-z0-9._-]{3,30}$/.test(s) ? s : null;
+}
+
+// x.com/<handle>: 1–15 letters, digits or underscores.
+export function parseX(input: string) {
+  const s = strip(input, [
+    "x.com/",
+    "twitter.com/",
+    "mobile.twitter.com/",
+  ]).replace(/^@/, "");
+  if (!s) return "";
+  return /^[A-Za-z0-9_]{1,15}$/.test(s) ? s : null;
 }
 
 // Discord usernames: 2–32 lowercase letters, digits, dots or underscores.

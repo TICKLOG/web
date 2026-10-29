@@ -108,8 +108,9 @@ export default async function PlayerPage({
     <main className="min-w-0 flex-1 px-10 pt-[30px] pb-10">
       {/* As wide as the content, so streak and likes sit above the right edge of the activity box. */}
       <div className="w-fit max-w-full">
-        <div className={`flex items-end justify-between gap-6 ${rise}`}>
-          <div>
+        <div className={`flex items-end gap-6 ${rise}`}>
+          {/* At least as wide as the skin column, so the links start above the activity box. */}
+          <div className="min-w-80">
             <h1 className="flex items-start gap-1 text-5xl font-extrabold tracking-tight text-heading">
               {profile.name}
               {linked && (
@@ -126,11 +127,15 @@ export default async function PlayerPage({
               <CopyButton text={profile.uuid} />
             </div>
           </div>
-          {/* Moved down so the gap to the activity box matches the one between activity and stats (16px). */}
-          <div className="flex shrink-0 translate-y-2 items-center gap-2">
+          {/* Moved down so the gap to the activity box matches the one between
+              activity and stats (16px). Links on the left, streak and likes on
+              the right. */}
+          <div className="flex min-w-0 flex-1 translate-y-2 items-center gap-2">
             <PlayerLinks links={links} />
-            <Streak days={streak} />
-            <LikeButton uuid={profile.uuid} {...liking} />
+            <div className="ml-auto flex shrink-0 items-center gap-2">
+              <Streak days={streak} />
+              <LikeButton uuid={profile.uuid} {...liking} />
+            </div>
           </div>
         </div>
 

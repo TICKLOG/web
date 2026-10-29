@@ -1,15 +1,15 @@
 "use client";
 
-import { useOptimistic, useState, useTransition } from "react";
+import { useOptimistic, useRef, useState, useTransition } from "react";
 import {
   resetPlaytime,
-  setLinks,
+  setLink,
   setProfileHidden,
   setServerHidden,
 } from "@/app/actions/account-settings";
 import type { Links } from "@/lib/links";
 import { formatDuration } from "@/lib/format";
-import { TwitchIcon, YoutubeIcon } from "./brand-icons";
+import { TwitchIcon, XIcon, YoutubeIcon } from "./brand-icons";
 import { DangerButton } from "./danger-button";
 import { DiscordIcon } from "./discord-icon";
 import { ServerIcon } from "./server-icon";
@@ -34,89 +34,95 @@ const LINK_FIELDS = [
     icon: <YoutubeIcon />,
   },
   {
+    key: "x",
+    label: "X",
+    prefix: "x.com/",
+    placeholder: "handle",
+    icon: <XIcon />,
+  },
+  {
     key: "discord",
     label: "Discord",
     prefix: "",
     placeholder: "username",
-    icon: <DiscordIcon className="size-4" />,
+    icon: <DiscordIcon className="size-4 text-[#5865f2]" />,
   },
 ] as const;
 
-// Twitch, YouTube and Discord shown on the player page.
-function LinksForm({ uuid, links }: { uuid: string; links: Links }) {
-  const [values, setValues] = useState({
-    twitch: links.twitch ?? "",
-    youtube: links.youtube ?? "",
-    discord: links.discord ?? "",
-  });
-  const [message, setMessage] = useState<{
-    error: boolean;
-    text: string;
-  } | null>(null);
-  const [pending, startTransition] = useTransition();
+type LinkKey = (typeof LINK_FIELDS)[number]["key"];
+
+// One link field; saves itself shortly after typing stops.
+function LinkField({
+  uuid,
+  field,
+  initial,
+}: {
+  uuid: string;
+  field: (typeof LINK_FIELDS)[number];
+  initial: string;
+}) {
+  const [value, setValue] = useState(initial);
+  const [error, setError] = useState<string | null>(null);
+  const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  function save(input: string) {
+    clearTimeout(timer.current);
+    timer.current = setTimeout(async () => {
+      const result = await setLink(uuid, field.key as LinkKey, input);
+      setError("error" in result ? (result.error ?? null) : null);
+    }, 600);
+  }
 
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        startTransition(async () => {
-          const result = await setLinks(uuid, values);
-          if ("error" in result && result.error)
-            return setMessage({ error: true, text: result.error });
-          if ("links" in result && result.links) {
-            const l = result.links;
-            setValues({
-              twitch: l.twitch ?? "",
-              youtube: l.youtube ?? "",
-              discord: l.discord ?? "",
-            });
-          }
-          setMessage({ error: false, text: "Saved." });
-        });
-      }}
-      className="flex flex-col gap-3 rounded-[14px] border border-search-border p-5"
-    >
-      {LINK_FIELDS.map((f) => (
-        <label key={f.key} className="flex items-center gap-3 text-[14px]">
-          <span className="flex w-24 shrink-0 items-center gap-2 text-search-text">
-            {f.icon}
-            {f.label}
-          </span>
-          <span className="flex h-9 min-w-0 flex-1 items-center rounded-[9px] border border-search-border bg-search px-3 focus-within:border-search-text">
-            {f.prefix && (
-              <span className="shrink-0 text-search-text">{f.prefix}</span>
-            )}
-            <input
-              value={values[f.key]}
-              onChange={(e) => {
-                setValues({ ...values, [f.key]: e.target.value });
-                setMessage(null);
-              }}
-              placeholder={f.placeholder}
-              spellCheck={false}
-              autoComplete="off"
-              className="min-w-0 flex-1 bg-transparent text-heading outline-none placeholder:text-search-border"
-            />
-          </span>
-        </label>
-      ))}
-      <div className="flex items-center justify-end gap-3">
-        {message && (
-          <p
-            className={`text-[13px] ${message.error ? "text-red-500" : "text-emerald-500"}`}
-          >
-            {message.text}
-          </p>
-        )}
-        <button
-          type="submit"
-          disabled={pending}
-          className="h-9 cursor-pointer rounded-[9px] bg-nav-active px-4 text-[14px] font-medium text-nav-active-text transition-opacity hover:opacity-90 disabled:cursor-default disabled:opacity-60"
+    <li className="px-5 py-3">
+      {/* Icon only; the label is for screen readers. */}
+      <label
+        aria-label={field.label}
+        className="flex items-center gap-3 text-[14px]"
+      >
+        <span className="flex w-5 shrink-0 justify-center">{field.icon}</span>
+        <span
+          className={`flex h-9 min-w-0 flex-1 items-center rounded-[9px] border bg-search px-3 ${
+            error
+              ? "border-red-500/60"
+              : "border-search-border focus-within:border-search-text"
+          }`}
         >
-          {pending ? "Saving…" : "Save"}
-        </button>
-      </div>
-    </form>
+          {field.prefix && (
+            <span className="shrink-0 text-search-text">{field.prefix}</span>
+          )}
+          <input
+            value={value}
+            onChange={(e) => {
+              setValue(e.target.value);
+              setError(null);
+              save(e.target.value);
+            }}
+            placeholder={field.placeholder}
+            spellCheck={false}
+            autoComplete="off"
+            className="min-w-0 flex-1 bg-transparent text-heading outline-none placeholder:text-search-border"
+          />
+        </span>
+      </label>
+      {error && <p className="mt-1.5 ml-8 text-[13px] text-red-500">{error}</p>}
+    </li>
+  );
+}
+
+// Twitch, YouTube, X and Discord shown on the player page.
+function LinksForm({ uuid, links }: { uuid: string; links: Links }) {
+  return (
+    <ul className="divide-y divide-search-border rounded-[14px] border border-search-border">
+      {LINK_FIELDS.map((f) => (
+        <LinkField
+          key={f.key}
+          uuid={uuid}
+          field={f}
+          initial={links[f.key] ?? ""}
+        />
+      ))}
+    </ul>
   );
 }
 

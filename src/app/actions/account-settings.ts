@@ -5,7 +5,7 @@ import { refresh } from "next/cache";
 import { db } from "@/db";
 import { hiddenServers, minecraftAccounts, playerSettings, playtime } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth/user";
-import { parseDiscord, parseTwitch, parseYoutube } from "@/lib/links";
+import { parseDiscord, parseTwitch, parseX, parseYoutube } from "@/lib/links";
 
 // Settings of a Minecraft account can only be changed by the user who has it
 // linked.
@@ -35,22 +35,25 @@ export async function setServerHidden(uuid: string, server: string, hidden: bool
   refresh();
 }
 
-// Saves the Twitch, YouTube and Discord links; returns which one is invalid.
-export async function setLinks(uuid: string, input: { twitch: string; youtube: string; discord: string }) {
-  if (!(await ownsAccount(uuid))) return { error: "Not your account." };
-  const twitch = parseTwitch(input.twitch);
-  const youtube = parseYoutube(input.youtube);
-  const discord = parseDiscord(input.discord);
-  if (twitch === null) return { error: "That's not a Twitch channel." };
-  if (youtube === null) return { error: "That's not a YouTube handle." };
-  if (discord === null) return { error: "That's not a Discord username." };
-  const links = { twitch: twitch || null, youtube: youtube || null, discord: discord || null };
+const PARSE = { twitch: parseTwitch, youtube: parseYoutube, x: parseX, discord: parseDiscord };
+const INVALID = {
+  twitch: "That's not a Twitch channel.",
+  youtube: "That's not a YouTube handle.",
+  x: "That's not an X handle.",
+  discord: "That's not a Discord username.",
+};
+
+// Saves one link (saved as you type); returns the stored name or an error.
+export async function setLink(uuid: string, key: keyof typeof PARSE, input: string) {
+  if (!(await ownsAccount(uuid)) || !(key in PARSE)) return { error: "Not your account." };
+  const value = PARSE[key](input);
+  if (value === null) return { error: INVALID[key] };
   await db
     .insert(playerSettings)
-    .values({ uuid, ...links })
-    .onConflictDoUpdate({ target: playerSettings.uuid, set: links });
+    .values({ uuid, [key]: value || null })
+    .onConflictDoUpdate({ target: playerSettings.uuid, set: { [key]: value || null } });
   refresh();
-  return { links };
+  return { value };
 }
 
 // Deletes all tracked playtime of the account; tracking goes on from zero.

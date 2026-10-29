@@ -2,14 +2,14 @@
 
 import { useState } from "react";
 import type { Links } from "@/lib/links";
-import { TwitchIcon, YoutubeIcon } from "./brand-icons";
+import { TwitchIcon, XIcon, YoutubeIcon } from "./brand-icons";
 import { DiscordIcon } from "./discord-icon";
 import { Icon } from "./icon";
 
 const BOX =
-  "flex size-9 cursor-pointer items-center justify-center rounded-[10px] border border-search-border bg-search text-search-text transition-colors";
+  "flex size-9 cursor-pointer items-center justify-center rounded-[10px] border border-search-border bg-search transition-colors hover:border-search-text";
 
-// Twitch, YouTube and Discord of a player, next to streak and likes. Discord
+// Twitch, YouTube, X and Discord of a player, above the activity box. Discord
 // has no profile links, so clicking it copies the username.
 export function PlayerLinks({ links }: { links: Links }) {
   const [copied, setCopied] = useState(false);
@@ -22,7 +22,7 @@ export function PlayerLinks({ links }: { links: Links }) {
           rel="noopener noreferrer nofollow"
           title={`twitch.tv/${links.twitch}`}
           aria-label="Twitch"
-          className={`${BOX} hover:text-[#9146ff]`}
+          className={BOX}
         >
           <TwitchIcon />
         </a>
@@ -34,9 +34,21 @@ export function PlayerLinks({ links }: { links: Links }) {
           rel="noopener noreferrer nofollow"
           title={`youtube.com/@${links.youtube}`}
           aria-label="YouTube"
-          className={`${BOX} hover:text-[#ff0000]`}
+          className={BOX}
         >
           <YoutubeIcon />
+        </a>
+      )}
+      {links.x && (
+        <a
+          href={`https://x.com/${links.x}`}
+          target="_blank"
+          rel="noopener noreferrer nofollow"
+          title={`x.com/${links.x}`}
+          aria-label="X"
+          className={BOX}
+        >
+          <XIcon />
         </a>
       )}
       {links.discord && (
@@ -50,14 +62,14 @@ export function PlayerLinks({ links }: { links: Links }) {
               setTimeout(() => setCopied(false), 1200);
             })
           }
-          className={`${BOX} hover:text-[#5865f2]`}
+          className={BOX}
         >
           {copied ? (
             <Icon className="size-4 text-emerald-500">
               <path d="M20 6 9 17l-5-5" />
             </Icon>
           ) : (
-            <DiscordIcon className="size-4" />
+            <DiscordIcon className="size-4 text-[#5865f2]" />
           )}
         </button>
       )}
