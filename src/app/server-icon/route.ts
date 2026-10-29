@@ -34,7 +34,7 @@ export async function GET(req: Request) {
   if (!png) {
     return new NextResponse(null, {
       status: 404,
-      headers: { "Cache-Control": "public, max-age=3600" },
+      headers: { "Cache-Control": "public, max-age=60" },
     });
   }
   return new NextResponse(Buffer.from(png, "base64"), {

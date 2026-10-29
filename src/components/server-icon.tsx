@@ -38,7 +38,7 @@ export function ServerIcon({
   return (
     // eslint-disable-next-line @next/next/no-img-element -- tiny icon from our own route; needs onError
     <img
-      src={`/server-icon?s=${encodeURIComponent(server)}`}
+      src={`/server-icon?s=${encodeURIComponent(server)}&v=2`}
       width={size}
       height={size}
       alt=""
