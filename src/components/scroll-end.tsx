@@ -8,9 +8,12 @@ export function ScrollEnd({ children, className = "" }: { children: React.ReactN
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = ref.current;
-    // Hidden tooltips add a few pixels of scroll width; only jump when the
-    // content itself doesn't fit.
-    if (el && el.scrollWidth - el.clientWidth > 80) el.scrollLeft = el.scrollWidth;
+    const last = el?.lastElementChild as HTMLElement | null | undefined;
+    if (!el || !last) return;
+    // Scroll to the right edge of the content itself; hidden tooltips would
+    // make scrollWidth a little wider than that.
+    const end = last.offsetLeft + last.offsetWidth - el.offsetLeft;
+    if (end > el.clientWidth) el.scrollLeft = end - el.clientWidth;
   }, []);
   return (
     <div ref={ref} className={`overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${className}`}>
