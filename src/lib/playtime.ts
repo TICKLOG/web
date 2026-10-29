@@ -125,6 +125,7 @@ export async function loadBreakdown(uuid: string): Promise<BreakdownData> {
       .from(playtime)
       .where(and(eq(playtime.uuid, uuid), eq(playtime.kind, "server"), ne(playtime.server, "")))
       .groupBy(playtime.server)
+      .having(gte(total, 60))
       .orderBy(desc(total))
       .limit(3),
   ]);

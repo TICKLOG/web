@@ -42,7 +42,9 @@ export function Heatmap({
       const date = new Date(start);
       date.setUTCDate(start.getUTCDate() + w * 7 + d);
       const key = date.toISOString().slice(0, 10);
-      const seconds = data.get(key) ?? 0;
+      // Less than a minute counts as not played.
+      const raw = data.get(key) ?? 0;
+      const seconds = raw < 60 ? 0 : raw;
       total += seconds;
       col.push({ date, seconds });
     }
@@ -69,7 +71,7 @@ export function Heatmap({
       <div className="flex items-baseline justify-between">
         <p className="text-[12px] font-semibold tracking-wider text-search-text uppercase">Activity</p>
         <p className="text-[12px] text-search-text">
-          {total > 0 ? (
+          {total >= 60 ? (
             <>
               <span className="font-semibold text-heading">{formatDuration(total)}</span> in the last year
             </>

@@ -21,7 +21,7 @@ function Tile({
   label: string;
   seconds: number;
 }) {
-  const empty = seconds === 0;
+  const empty = seconds < 60;
   return (
     <div className="rounded-[10px] border border-search-border bg-background p-3">
       <div className="flex items-center justify-between">

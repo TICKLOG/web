@@ -52,7 +52,13 @@ export function HeatmapGrid({ cells, accent }: { cells: HeatCell[]; accent: stri
               role="tooltip"
               className={`pointer-events-none absolute z-10 rounded-[6px] border border-search-border bg-background px-2 py-1 text-[12px] whitespace-nowrap text-search-text transition-opacity group-hover:opacity-100 ${shown ? "opacity-100" : "opacity-0"} ${below ? "top-full mt-1.5" : "bottom-full mb-1.5"} ${right ? "right-0" : left ? "left-0" : "left-1/2 -translate-x-1/2"}`}
             >
-              <span className="font-semibold text-heading">{formatDuration(c.seconds)}</span> on {c.label}
+              {c.seconds > 0 ? (
+                <>
+                  <span className="font-semibold text-heading">{formatDuration(c.seconds)}</span> on {c.label}
+                </>
+              ) : (
+                `No playtime on ${c.label}`
+              )}
             </span>
           </span>
         );
