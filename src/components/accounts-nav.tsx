@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useOptimistic, useState, useTransition } from "react";
 import { reorderAccounts, unlinkAccount } from "@/app/actions/accounts";
+import { locatorColor } from "@/lib/minecraft";
 import { Icon } from "./icon";
 import { NavDivider } from "./nav-item";
 import { setSidebarCollapsed } from "./sidebar-controls";
@@ -105,8 +106,16 @@ export function AccountsNav({ accounts }: { accounts: NavAccount[] }) {
                   aria-current={isActive ? "page" : undefined}
                   draggable={false}
                   title={account.name}
-                  className={`${subItem} min-w-0 flex-1 ${isActive ? "font-medium text-heading" : "text-nav-text hover:text-heading"}`}
+                  className={`${subItem} min-w-0 flex-1 ${isActive ? "font-semibold text-heading" : "text-nav-text hover:text-heading"}`}
                 >
+                  {/* Selected account: a bar and a ring around the head in the player's locator color. */}
+                  {isActive && (
+                    <span
+                      aria-hidden="true"
+                      className="absolute inset-y-2 left-0 w-[3px] rounded-full collapsed:hidden"
+                      style={{ backgroundColor: locatorColor(account.uuid) }}
+                    />
+                  )}
                   <Image
                     src={`/heads/${account.uuid}.png`}
                     alt=""
@@ -115,13 +124,13 @@ export function AccountsNav({ accounts }: { accounts: NavAccount[] }) {
                     unoptimized
                     draggable={false}
                     className="size-5 max-w-none shrink-0 rounded-[4px] [image-rendering:pixelated]"
+                    style={
+                      isActive
+                        ? { outline: `1.5px solid ${locatorColor(account.uuid)}`, outlineOffset: "1.5px" }
+                        : undefined
+                    }
                   />
                   <span className="truncate collapsed:hidden">{account.name}</span>
-                  {isActive && (
-                    <Icon className="ml-auto size-4 collapsed:hidden">
-                      <path d="M20 6 9 17l-5-5" />
-                    </Icon>
-                  )}
                 </Link>
                 <Link
                   href={`/player/${account.name.toLowerCase()}`}
