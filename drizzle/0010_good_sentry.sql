@@ -1,0 +1,1 @@
+ALTER TABLE "ticklog"."player_settings" ADD COLUMN "featured_server" text;

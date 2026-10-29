@@ -6,9 +6,13 @@ export type BreakdownData = {
   server: number;
   singleplayer: number;
   launcher: number;
-  // Top servers by playtime, most first.
-  servers: { server: string; seconds: number }[];
+  // Top servers by playtime, most first; a featured one (account setting) leads.
+  servers: { server: string; seconds: number; featured?: boolean }[];
 };
+
+export const STAR = (
+  <path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z" />
+);
 
 function Tile({
   icon,
@@ -107,13 +111,19 @@ export function Breakdown({
       <ol className="mt-2 flex flex-col gap-1.5">
         {[0, 1, 2].map((i) => {
           const s = data.servers[i];
+          // The featured server gets a star; the others are numbered.
+          const rank = data.servers[0]?.featured ? i : i + 1;
           return (
             <li
               key={s?.server ?? i}
               className="flex items-center gap-3 text-[14px]"
             >
-              <span className="w-4 font-mono text-[12px] text-search-text">
-                {i + 1}
+              <span className="flex w-4 justify-center font-mono text-[12px] text-search-text">
+                {s?.featured ? (
+                  <Icon className="size-3.5 fill-current text-yellow-400">{STAR}</Icon>
+                ) : (
+                  rank
+                )}
               </span>
               <span
                 className={`flex w-56 items-center gap-2 font-mono ${s ? "text-heading" : "text-search-border"}`}

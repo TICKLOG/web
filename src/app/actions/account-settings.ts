@@ -34,10 +34,21 @@ export async function setServerHidden(uuid: string, server: string, hidden: bool
   refresh();
 }
 
+// Server always shown first in the top servers, or null for none.
+export async function setFeaturedServer(uuid: string, server: string | null) {
+  if (!(await ownsAccount(uuid))) return;
+  await db
+    .insert(playerSettings)
+    .values({ uuid, featuredServer: server })
+    .onConflictDoUpdate({ target: playerSettings.uuid, set: { featuredServer: server } });
+  refresh();
+}
+
 // Deletes all tracked playtime of the account; tracking goes on from zero.
 export async function resetPlaytime(uuid: string) {
   if (!(await ownsAccount(uuid))) return;
   await db.delete(playtime).where(eq(playtime.uuid, uuid));
   await db.delete(hiddenServers).where(eq(hiddenServers.uuid, uuid));
+  await db.update(playerSettings).set({ featuredServer: null }).where(eq(playerSettings.uuid, uuid));
   refresh();
 }
