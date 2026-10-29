@@ -20,7 +20,7 @@ export default async function AccountPage({ params }: PageProps<"/accounts/[name
   return (
     <main className="flex-1 px-10 pt-[30px] pb-10">
       <div className="max-w-2xl">
-        <PageHeader title={account.name} description="Your settings for this Minecraft account." />
+        <PageHeader title={account.name} description="Customize this account." />
       </div>
     </main>
   );
