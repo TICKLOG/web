@@ -80,7 +80,7 @@ export default async function PlayerPage({
   if (await isProfileHidden(profile.uuid))
     return (
       <ComingSoon
-        title="This Profile Is Private"
+        title="Private Profile"
         subtitle={`${profile.name} has hidden their profile.`}
       />
     );
