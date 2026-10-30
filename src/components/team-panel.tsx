@@ -96,20 +96,14 @@ export function TeamPanel({
 
   return (
     <>
+      {/* One block: the add field right above the list. */}
       <SettingsSection
-        title="Add Member"
-        description="Enter a Minecraft name linked to a TickLog account."
+        title="Members"
+        description={`${list.length} ${list.length === 1 ? "member" : "members"} can open this panel. Add someone by a Minecraft name linked to TickLog.`}
         delay={70}
       >
         <AddMember />
-      </SettingsSection>
-
-      <SettingsSection
-        title="Members"
-        description={`${list.length} ${list.length === 1 ? "member" : "members"} can open this panel.`}
-        delay={105}
-      >
-        <ul className="divide-y divide-search-border rounded-[14px] border border-search-border">
+        <ul className="mt-3 divide-y divide-search-border rounded-[14px] border border-search-border">
           {list.map((m) => (
             <li
               key={m.userId}
