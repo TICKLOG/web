@@ -81,6 +81,13 @@ body {
   }
 }
 
+/* The loading spinner fades in. */
+@keyframes appear {
+  from {
+    opacity: 0;
+  }
+}
+
 /* Leaderboard bars grow in from the left. */
 @keyframes grow {
   from {
