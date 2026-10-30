@@ -197,10 +197,10 @@ export function OnlineChart({
                     strokeDasharray={q ? "2 4" : undefined}
                   />
                   <text
-                    x={PAD.left - 8}
+                    // Left-aligned under the online number.
+                    x={0}
                     y={y(v)}
                     dy="0.32em"
-                    textAnchor="end"
                     className="fill-search-text text-[11px] tabular-nums"
                   >
                     {v}
