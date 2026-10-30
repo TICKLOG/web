@@ -3,7 +3,8 @@ import { Icon } from "@/components/icon";
 import { OnlineChart } from "@/components/online-chart";
 import { PageHeader } from "@/components/page-header";
 import { loadOnline } from "@/lib/online";
-import { loadSiteStats } from "@/lib/site-stats";
+import { TopServers } from "@/components/top-servers";
+import { loadSiteStats, loadTopServersToday } from "@/lib/site-stats";
 
 // The page builds up block by block, like the settings page.
 const rise =
@@ -70,7 +71,11 @@ function AdBox({ className }: { className: string }) {
 }
 
 export default async function Home() {
-  const [stats, online] = await Promise.all([loadSiteStats(), loadOnline()]);
+  const [stats, online, topServers] = await Promise.all([
+    loadSiteStats(),
+    loadOnline(),
+    loadTopServersToday(),
+  ]);
   return (
     <main className="flex min-w-0 flex-1 flex-col px-4 pt-6 pb-10 md:px-10 md:pt-[30px]">
       <div className="flex flex-1 flex-col">
@@ -82,7 +87,7 @@ export default async function Home() {
         {/* Site totals and players online with the mod; on wide screens the
             ad box sits on the right, down to the bottom of the page. */}
         <div className="mt-8 flex flex-1 flex-col gap-3 xl:flex-row">
-          <div className="min-w-0 flex-1">
+          <div className="flex min-w-0 flex-1 flex-col">
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-3 lg:grid-cols-4 xl:grid-cols-2 2xl:grid-cols-4">
               <StatTile
                 label="Tracked Players"
@@ -142,9 +147,13 @@ export default async function Home() {
               data={online}
               className={`mt-3 ${rise} [animation-delay:210ms]`}
             />
+            <TopServers
+              servers={topServers}
+              className={`mt-3 flex-1 ${rise} [animation-delay:245ms]`}
+            />
           </div>
           <AdBox
-            className={`xl:w-64 xl:shrink-0 ${rise} [animation-delay:245ms]`}
+            className={`xl:w-64 xl:shrink-0 ${rise} [animation-delay:280ms]`}
           />
         </div>
       </div>
