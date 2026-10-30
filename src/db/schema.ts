@@ -106,7 +106,10 @@ export const playtime = ticklog.table(
 // Server addresses the mod reported, checked with a server list ping. Only
 // reachable ones are listed on profiles and get an icon.
 export const servers = ticklog.table("servers", {
+  // Main domain the time is listed under (mc.hypixel.net -> hypixel.net).
   address: text().primaryKey(),
+  // Address that answered the ping, used for the icon.
+  pingAddress: text(),
   reachable: boolean().notNull(),
   checkedAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
 });

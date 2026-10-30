@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import { isIP } from "node:net";
+import { getDomain } from "tldts";
 import { and, desc, eq, gte, ne, notExists, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { hiddenServers, modSessions, playerSettings, playtime, servers } from "@/db/schema";
@@ -41,36 +42,64 @@ function mayCheck(token: string) {
   return true;
 }
 
-// The address to list the time under, or "" to only count it as server time:
+// Hosts where every subdomain is someone else's server, so those keep their
+// subdomain (xyz.aternos.me stays xyz.aternos.me).
+const SHARED_HOSTS = new Set([
+  "aternos.me",
+  "minehut.gg",
+  "exaroton.me",
+  "falixsrv.me",
+  "playit.gg",
+  "joinmc.link",
+  "e4mc.link",
+  "feathermc.gg",
+  "ploudos.me",
+  "minefort.com",
+  "serv.nu",
+  "ngrok.io",
+  "ngrok-free.app",
+]);
+
+// The name a server is listed under: its main domain, so mc.hypixel.net,
+// play.hypixel.net and hypixel.net count as one server. The port is dropped.
+export function serverName(host: string) {
+  const domain = getDomain(host);
+  if (!domain || SHARED_HOSTS.has(domain)) return host;
+  return domain;
+}
+
+// The name to list the time under, or "" to only count it as server time:
 // IPs (private servers), local names and addresses no Minecraft server
 // answers on aren't listed. Realms has no address and is kept as "realms".
 export async function verifiedServer(token: string, address: string) {
   if (!address || address === "realms") return address;
   const host = address.replace(/:\d+$/, "");
   if (address.startsWith("[") || isIP(host) || !host.includes(".")) return "";
-  const [known] = await db.select().from(servers).where(eq(servers.address, address));
+  const name = serverName(host);
+  const [known] = await db.select().from(servers).where(eq(servers.address, name));
   if (known) {
     const age = Date.now() - known.checkedAt.getTime();
     if (age < (known.reachable ? REACHABLE_FOR : UNREACHABLE_FOR)) {
-      return known.reachable ? address : "";
+      return known.reachable ? name : "";
     }
   }
-  if (!mayCheck(token)) return known?.reachable ? address : "";
+  if (!mayCheck(token)) return known?.reachable ? name : "";
   const reachable = (await pingStatus(address)) !== null;
+  const set = reachable ? { reachable, pingAddress: address } : { reachable };
   await db
     .insert(servers)
-    .values({ address, reachable })
-    .onConflictDoUpdate({ target: servers.address, set: { reachable, checkedAt: sql`now()` } });
-  return reachable ? address : "";
+    .values({ address: name, ...set })
+    .onConflictDoUpdate({ target: servers.address, set: { ...set, checkedAt: sql`now()` } });
+  return reachable ? name : "";
 }
 
-// Whether an address passed the ping check (for server icons).
-export async function isReachable(address: string) {
+// The address to ping for a listed server's icon, or null if it isn't one.
+export async function iconAddress(name: string) {
   const [row] = await db
-    .select({ reachable: servers.reachable })
+    .select({ reachable: servers.reachable, pingAddress: servers.pingAddress })
     .from(servers)
-    .where(eq(servers.address, address));
-  return row?.reachable ?? false;
+    .where(eq(servers.address, name));
+  return row?.reachable ? (row.pingAddress ?? name) : null;
 }
 
 // Credits the time since the last beat (capped) to `kind`/`server` on today's

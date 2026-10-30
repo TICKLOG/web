@@ -20,7 +20,8 @@
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "sharp": "^0.35.5",
-    "skinview3d": "^3.4.2"
+    "skinview3d": "^3.4.2",
+    "tldts": "^7.4.19"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "^4",

@@ -1,0 +1,1 @@
+ALTER TABLE "ticklog"."servers" ADD COLUMN "ping_address" text;
