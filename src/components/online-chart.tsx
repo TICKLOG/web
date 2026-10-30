@@ -92,6 +92,17 @@ export function OnlineChart({
   const [hover, setHover] = useState<number | null>(null);
   const box = useRef<HTMLDivElement>(null);
   const [online, setOnline] = useState(data.now);
+  // Width of the online number, so the y-axis labels center under it.
+  const number = useRef<HTMLSpanElement>(null);
+  const [numberWidth, setNumberWidth] = useState(14);
+
+  useLayoutEffect(() => {
+    const el = number.current;
+    if (!el) return;
+    const observer = new ResizeObserver(() => setNumberWidth(el.offsetWidth));
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   // Live count: asks again every 30 seconds while the tab is visible.
   useEffect(() => {
@@ -154,7 +165,9 @@ export function OnlineChart({
             Online Now
           </p>
           <p className="mt-1 text-2xl font-semibold text-heading tabular-nums">
-            <CountUp value={online} />
+            <span ref={number}>
+              <CountUp value={online} />
+            </span>
           </p>
         </div>
         <Segmented
@@ -197,10 +210,11 @@ export function OnlineChart({
                     strokeDasharray={q ? "2 4" : undefined}
                   />
                   <text
-                    // Left-aligned under the online number.
-                    x={0}
+                    // Centered under the online number.
+                    x={numberWidth / 2}
                     y={y(v)}
                     dy="0.32em"
+                    textAnchor="middle"
                     className="fill-search-text text-[11px] tabular-nums"
                   >
                     {v}
