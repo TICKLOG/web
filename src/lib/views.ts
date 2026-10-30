@@ -1,5 +1,5 @@
 import { createHmac } from "node:crypto";
-import { and, count, eq, sql } from "drizzle-orm";
+import { and, count, eq, lt, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { profileViews } from "@/db/schema";
 
@@ -16,9 +16,11 @@ export async function loadViews(uuid: string) {
 }
 
 // Counts a view once per viewer and month. `viewer` is the TickLog user id or
-// the IP; only an HMAC of it is stored.
+// the IP; only an HMAC of it is stored, and only for the current month (see
+// the privacy policy).
 export async function addView(uuid: string, viewer: string) {
   const hash = createHmac("sha256", process.env.VIEW_SECRET!).update(viewer).digest("hex");
+  await db.delete(profileViews).where(lt(profileViews.month, thisMonth));
   await db.insert(profileViews).values({ uuid, month: thisMonth, viewer: hash }).onConflictDoNothing();
   return loadViews(uuid);
 }
