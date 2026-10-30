@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { AccountsNavLoader, DiscordAccountLoader } from "./account-loaders";
+import { AccountsNavLoader, DiscordAccountLoader, TeamNavLoader } from "./account-loaders";
 import { ModrinthIcon } from "./modrinth-icon";
 import { NavDivider, NavItem } from "./nav-item";
 import { SearchPlayer } from "./search-player";
@@ -171,6 +171,8 @@ export function Sidebar() {
           <NavItem label="Home" href="/" icon={<HomeIcon />} />
           <NavItem label="Leaderboard" href="/leaderboard" icon={<LeaderboardIcon />} />
           <NavItem label="Badges" href="/badges" icon={<BadgesIcon />} />
+          {/* Only shown to team members. */}
+          <TeamNavLoader />
           {/* Only shown when logged in with Discord. */}
           <AccountsNavLoader />
           <NavDivider />

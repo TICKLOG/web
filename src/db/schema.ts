@@ -21,6 +21,15 @@ export const users = ticklog.table("users", {
   createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
 });
 
+// TickLog users on the team: they see the Team panel and can add or remove
+// other members there.
+export const teamMembers = ticklog.table("team_members", {
+  userId: uuid()
+    .primaryKey()
+    .references(() => users.id, { onDelete: "cascade" }),
+  addedAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+});
+
 export const minecraftAccounts = ticklog.table(
   "minecraft_accounts",
   {
