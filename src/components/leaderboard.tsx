@@ -142,7 +142,7 @@ export function Leaderboard({ data }: { data: LeaderboardData }) {
               return (
                 <li key={r.uuid} className={rise} style={{ animationDelay: `${delay}ms` }}>
                   <Link
-                    href={`/player/${r.name.toLowerCase()}`}
+                    href={`/@${r.name.toLowerCase()}`}
                     className={`relative flex items-center gap-4 overflow-hidden px-5 transition-colors hover:bg-hover ${big ? "py-4" : "py-3"}`}
                   >
                     <span

@@ -130,7 +130,7 @@ export function AccountsNav({ accounts }: { accounts: NavAccount[] }) {
                   </span>
                 </Link>
                 <Link
-                  href={`/player/${account.name.toLowerCase()}`}
+                  href={`/@${account.name.toLowerCase()}`}
                   aria-label={`Open ${account.name}'s Player Page`}
                   title="Open Player Page"
                   draggable={false}

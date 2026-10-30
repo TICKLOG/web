@@ -52,7 +52,7 @@ export function SearchPlayer() {
           const player = await findPlayer(name);
           if (!player) return showFlash("missing");
           showFlash("found");
-          router.push(`/player/${player.toLowerCase()}`);
+          router.push(`/@${player.toLowerCase()}`);
         });
       }}
     >

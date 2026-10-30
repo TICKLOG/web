@@ -64,7 +64,7 @@ async function loadLikes(uuid: string) {
   return { count: n, liked: Boolean(mine), loggedIn: Boolean(user) };
 }
 
-// Public player profile at /player/{name} (lowercase).
+// Public player profile at /@{name} (lowercase), rewritten to this route.
 export default async function PlayerPage({
   params,
 }: PageProps<"/player/[name]">) {
