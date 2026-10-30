@@ -134,6 +134,13 @@
       "when": 1793373431022,
       "tag": "0018_far_trauma",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1793387576978,
+      "tag": "0019_omniscient_slipstream",
+      "breakpoints": true
     }
   ]
 }

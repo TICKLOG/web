@@ -5,7 +5,7 @@ import { refresh } from "next/cache";
 import { db } from "@/db";
 import { hiddenServers, minecraftAccounts, playerSettings, playtime } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth/user";
-import { parseDiscord, parseTwitch, parseX, parseYoutube } from "@/lib/links";
+import { parseDiscord, parseGithub, parseTwitch, parseX, parseYoutube } from "@/lib/links";
 
 // Settings of a Minecraft account can only be changed by the user who has it
 // linked.
@@ -35,12 +35,19 @@ export async function setServerHidden(uuid: string, server: string, hidden: bool
   refresh();
 }
 
-const PARSE = { twitch: parseTwitch, youtube: parseYoutube, x: parseX, discord: parseDiscord };
+const PARSE = {
+  discordName: parseDiscord,
+  twitch: parseTwitch,
+  youtube: parseYoutube,
+  github: parseGithub,
+  x: parseX,
+};
 const INVALID = {
   twitch: "That's not a Twitch channel.",
   youtube: "That's not a YouTube handle.",
+  discordName: "That's not a Discord username.",
+  github: "That's not a GitHub username.",
   x: "That's not an X handle.",
-  discord: "That's not a Discord invite.",
 };
 
 // Saves one link (saved as you type); returns the stored name or an error.

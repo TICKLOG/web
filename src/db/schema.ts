@@ -171,12 +171,15 @@ export const playerSettings = ticklog.table("player_settings", {
   uuid: uuid().primaryKey(),
   // Player page shows no playtime, streak or servers.
   hidden: boolean().notNull().default(false),
-  // Links on the player page: Twitch, YouTube and X names (no @) and a
-  // Discord server invite code.
+  // Links on the player page: Twitch, YouTube, GitHub and X names (no @)
+  // and a Discord username.
   twitch: text(),
   youtube: text(),
   x: text(),
+  // Discord server invite code; no longer used, see discordName.
   discord: text(),
+  discordName: text(),
+  github: text(),
 });
 
 // Servers a player keeps off their top servers (the time still counts).

@@ -1,14 +1,17 @@
 import type { Links } from "@/lib/links";
-import { TwitchIcon, XIcon, YoutubeIcon } from "./brand-icons";
-import { DiscordIcon } from "./discord-icon";
+import { GitHubIcon, TwitchIcon, XIcon, YoutubeIcon } from "./brand-icons";
+import { DiscordLink } from "./discord-link";
 
 const BOX =
   "flex size-9 cursor-pointer items-center justify-center rounded-[10px] border border-search-border bg-search transition-colors hover:border-search-text";
 
-// Twitch, YouTube, X and Discord server of a player, above the activity box.
+// Discord, Twitch, YouTube, GitHub and X of a player, above the activity box.
 export function PlayerLinks({ links }: { links: Links }) {
   return (
     <>
+      {links.discordName && (
+        <DiscordLink name={links.discordName} className={BOX} />
+      )}
       {links.twitch && (
         <a
           href={`https://twitch.tv/${links.twitch}`}
@@ -33,6 +36,18 @@ export function PlayerLinks({ links }: { links: Links }) {
           <YoutubeIcon />
         </a>
       )}
+      {links.github && (
+        <a
+          href={`https://github.com/${links.github}`}
+          target="_blank"
+          rel="noopener noreferrer nofollow"
+          title={`github.com/${links.github}`}
+          aria-label="GitHub"
+          className={BOX}
+        >
+          <GitHubIcon />
+        </a>
+      )}
       {links.x && (
         <a
           href={`https://x.com/${links.x}`}
@@ -43,18 +58,6 @@ export function PlayerLinks({ links }: { links: Links }) {
           className={BOX}
         >
           <XIcon />
-        </a>
-      )}
-      {links.discord && (
-        <a
-          href={`https://discord.gg/${links.discord}`}
-          target="_blank"
-          rel="noopener noreferrer nofollow"
-          title={`discord.gg/${links.discord}`}
-          aria-label="Discord"
-          className={BOX}
-        >
-          <DiscordIcon className="size-4 text-[#5865f2]" />
         </a>
       )}
     </>

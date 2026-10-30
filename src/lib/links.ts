@@ -4,8 +4,9 @@
 export type Links = {
   twitch: string | null;
   youtube: string | null;
+  discordName: string | null;
+  github: string | null;
   x: string | null;
-  discord: string | null;
 };
 
 function strip(input: string, hosts: string[]) {
@@ -43,10 +44,17 @@ export function parseX(input: string) {
   return /^[A-Za-z0-9_]{1,15}$/.test(s) ? s : null;
 }
 
-// discord.gg/<invite>: the code of a Discord server invite (2–32 letters,
-// digits or dashes).
+// Discord username: 2–32 lowercase letters, digits, underscores or dots,
+// no two dots in a row. There's no profile URL for it, so it's copied.
 export function parseDiscord(input: string) {
-  const s = strip(input, ["discord.gg/", "discord.com/invite/", "discordapp.com/invite/"]);
+  const s = input.trim().replace(/^@/, "").toLowerCase();
   if (!s) return "";
-  return /^[A-Za-z0-9-]{2,32}$/.test(s) ? s : null;
+  return /^[a-z0-9_.]{2,32}$/.test(s) && !s.includes("..") ? s : null;
+}
+
+// github.com/<name>: 1–39 letters, digits or single dashes, not at the ends.
+export function parseGithub(input: string) {
+  const s = strip(input, ["github.com/"]).replace(/^@/, "");
+  if (!s) return "";
+  return /^[A-Za-z0-9](?:-?[A-Za-z0-9]){0,38}$/.test(s) ? s : null;
 }

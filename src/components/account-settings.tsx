@@ -9,7 +9,7 @@ import {
 } from "@/app/actions/account-settings";
 import type { Links } from "@/lib/links";
 import { formatDuration } from "@/lib/format";
-import { TwitchIcon, XIcon, YoutubeIcon } from "./brand-icons";
+import { GitHubIcon, TwitchIcon, XIcon, YoutubeIcon } from "./brand-icons";
 import { DangerButton } from "./danger-button";
 import { DiscordIcon } from "./discord-icon";
 import { ServerIcon } from "./server-icon";
@@ -19,6 +19,13 @@ import { Switch } from "./switch";
 type Server = { server: string; seconds: number; hidden: boolean };
 
 const LINK_FIELDS = [
+  {
+    key: "discordName",
+    label: "Discord",
+    prefix: "",
+    placeholder: "username",
+    icon: <DiscordIcon className="size-4 text-[#5865f2]" />,
+  },
   {
     key: "twitch",
     label: "Twitch",
@@ -34,18 +41,18 @@ const LINK_FIELDS = [
     icon: <YoutubeIcon />,
   },
   {
+    key: "github",
+    label: "GitHub",
+    prefix: "github.com/",
+    placeholder: "username",
+    icon: <GitHubIcon />,
+  },
+  {
     key: "x",
     label: "X",
     prefix: "x.com/",
     placeholder: "channel",
     icon: <XIcon />,
-  },
-  {
-    key: "discord",
-    label: "Discord",
-    prefix: "discord.gg/",
-    placeholder: "server",
-    icon: <DiscordIcon className="size-4 text-[#5865f2]" />,
   },
 ] as const;
 
@@ -110,7 +117,7 @@ function LinkField({
   );
 }
 
-// Twitch, YouTube, X and Discord shown on the player page.
+// Discord, Twitch, YouTube, GitHub and X shown on the player page.
 function LinksForm({ uuid, links }: { uuid: string; links: Links }) {
   return (
     <ul className="divide-y divide-search-border rounded-[14px] border border-search-border">

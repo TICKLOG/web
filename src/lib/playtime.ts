@@ -215,10 +215,13 @@ export async function loadPlayerSettings(uuid: string) {
       hidden: playerSettings.hidden,
       twitch: playerSettings.twitch,
       youtube: playerSettings.youtube,
+      discordName: playerSettings.discordName,
+      github: playerSettings.github,
       x: playerSettings.x,
-      discord: playerSettings.discord,
     })
     .from(playerSettings)
     .where(eq(playerSettings.uuid, uuid));
-  return row ?? { hidden: false, twitch: null, youtube: null, x: null, discord: null };
+  return (
+    row ?? { hidden: false, twitch: null, youtube: null, discordName: null, github: null, x: null }
+  );
 }
