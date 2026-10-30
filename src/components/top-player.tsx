@@ -36,14 +36,14 @@ export function TopPlayer({
       className={`flex flex-col rounded-[12px] border border-search-border bg-search p-4 ${className}`}
     >
       <p className={label}>Top Player Today</p>
-      {/* Name tag over the head like in game, today's time under the feet. */}
+      {/* Name over the head like in game, today's time under the feet. */}
       <FitSkin
         textures={textures}
         className="mt-2 h-96 lg:h-auto lg:min-h-40 lg:flex-1"
         above={
           <Link
             href={`/@${player.name.toLowerCase()}`}
-            className="max-w-full truncate rounded-[3px] bg-search-border px-2 py-1 font-minecraft text-[14px] leading-none text-heading transition-opacity hover:opacity-80"
+            className="max-w-full truncate pb-1 font-minecraft text-[15px] leading-none text-heading transition-opacity hover:opacity-80"
           >
             <span className="text-yellow-500 dark:text-yellow-400">#1</span> {player.name}
           </Link>
