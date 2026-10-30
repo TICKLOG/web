@@ -48,7 +48,7 @@ export default async function Home() {
             TICKLOG
           </h1>
           <p className="mt-1.5 text-[17px] leading-7 text-search-text">
-            Track your Minecraft playtime with a single mod.
+            Track your Minecraft stats with a single mod.
           </p>
         </div>
       </div>

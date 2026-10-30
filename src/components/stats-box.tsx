@@ -56,7 +56,7 @@ function Toggle<T extends string>({
           type="button"
           aria-pressed={value === key}
           onClick={() => onChange(key)}
-          className={`flex h-full cursor-pointer items-center rounded-[4px] px-1.5 text-[11px] leading-none font-medium transition-colors ${
+          className={`flex h-full cursor-pointer items-center rounded-[4px] px-1 text-[11px] leading-none font-medium transition-colors ${
             value === key
               ? "bg-search-border text-heading"
               : "text-search-text hover:text-heading"
@@ -70,7 +70,7 @@ function Toggle<T extends string>({
 }
 
 // One stat, like the playtime tiles; a compact row in narrow boxes. A tile
-// with a toggle shows it next to its name, in place of the icon.
+// with a toggle shows it next to its name.
 function Tile({
   label,
   icon,
@@ -86,16 +86,14 @@ function Tile({
 }) {
   return (
     <div className="flex items-center justify-between gap-2 rounded-[10px] border border-search-border bg-background px-3 py-2.5 @md:block @md:p-3">
-      <div className="flex min-w-0 items-center gap-2 @md:h-5 @md:justify-between">
-        <span className="truncate text-[12px] font-semibold tracking-wider text-search-text uppercase">
+      <div className="flex min-w-0 items-center gap-2 @md:h-5 @md:gap-1.5">
+        <span className="truncate text-[12px] font-semibold tracking-wider text-search-text uppercase @md:flex-1">
           {label}
         </span>
-        <Icon
-          className={`size-4 text-search-text @max-md:order-first ${toggle ? "@md:hidden" : ""}`}
-        >
+        {toggle}
+        <Icon className="size-4 shrink-0 text-search-text @max-md:order-first">
           {icon}
         </Icon>
-        {toggle}
       </div>
       <p
         className={`text-[16px] font-semibold tabular-nums @md:mt-1 @md:text-[18px] ${value === null ? "text-search-border" : "text-heading"}`}
@@ -345,13 +343,11 @@ export function StatsBox({
           label="Deaths"
           value={value("deaths")}
           emptyText={empty}
-          // Lucide "skull"
+          // Lucide "heart-crack"
           icon={
             <>
-              <path d="m12.5 17-.5-1-.5 1h1z" />
-              <path d="M15 22a1 1 0 0 0 1-1v-1a2 2 0 0 0 1.56-3.25 8 8 0 1 0-11.12 0A2 2 0 0 0 8 20v1a1 1 0 0 0 1 1z" />
-              <circle cx="15" cy="12" r="1" />
-              <circle cx="9" cy="12" r="1" />
+              <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+              <path d="m12 13-1-1 2-2-3-3 2-2" />
             </>
           }
         />

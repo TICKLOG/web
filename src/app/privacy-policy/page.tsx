@@ -15,7 +15,7 @@ export default function PrivacyPolicyPage() {
             items={[
               "TickLog does not use advertising, analytics or tracking cookies.",
               "Personal data is not sold or disclosed for marketing purposes.",
-              "Users can hide their profile, reset their playtime or delete their account at any time.",
+              "Users can hide their profile, reset their stats or delete their account at any time.",
             ]}
           />
         </LegalSection>
@@ -82,13 +82,13 @@ export default function PrivacyPolicyPage() {
             items={[
               "the Minecraft UUID and name, verified through Mojang's authentication servers;",
               "the playtime per day, in intervals of up to one minute;",
-              "the type of play (singleplayer, multiplayer or launcher) and the server address.",
+              "the type of play (singleplayer, multiplayer or launcher) and the server address;",
+              "from version 1.1.0, gameplay stats per day: blocks traveled, broken and placed, kills, deaths and jumps.",
             ]}
           />
           <p>
             Server addresses are verified with a status request. IP addresses as
-            well as private and local servers count towards the total playtime
-            but are never displayed. The mod&apos;s access token is stored
+            well as private and local servers count towards the totals but are never displayed. The mod&apos;s access token is stored
             exclusively as a hash.
           </p>
           <p>
@@ -99,13 +99,13 @@ export default function PrivacyPolicyPage() {
         <LegalSection title="Public Player Profiles" delay={315}>
           <p>
             Player profiles are publicly accessible and show name, UUID, skin,
-            capes, playtime, top servers, badges, links, likes and views. Names,
+            capes, playtime, top servers, stats, badges, links, likes and views. Names,
             skins and capes are retrieved from Mojang&apos;s public interface.
             Skins are loaded directly from Mojang&apos;s servers, which thereby
             receive the visitor&apos;s IP address.
           </p>
           <p>
-            In the account settings, users can hide their playtime or individual
+            In the account settings, users can hide their stats or individual
             servers and manage their links at any time.
           </p>
         </LegalSection>
@@ -128,7 +128,7 @@ export default function PrivacyPolicyPage() {
           <LegalList
             items={[
               "Account, linked Minecraft accounts and likes: until the account is deleted in the settings.",
-              "Playtime: until it is reset in the account settings or deleted upon request.",
+              "Playtime and stats: until they are reset in the account settings or deleted upon request.",
               "Mod access tokens: replaced with every new login.",
             ]}
           />
