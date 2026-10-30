@@ -43,9 +43,9 @@ export function TopPlayer({
         above={
           <Link
             href={`/@${player.name.toLowerCase()}`}
-            className="max-w-full truncate rounded-[3px] bg-black/50 px-2 py-1 font-minecraft text-[14px] leading-none text-white transition-colors hover:bg-black/70"
+            className="max-w-full truncate rounded-[3px] bg-search-border px-2 py-1 font-minecraft text-[14px] leading-none text-heading transition-opacity hover:opacity-80"
           >
-            <span className="text-yellow-400">#1</span> {player.name}
+            <span className="text-yellow-500 dark:text-yellow-400">#1</span> {player.name}
           </Link>
         }
         below={
@@ -55,7 +55,7 @@ export function TopPlayer({
               <polyline points="12 6 12 12 16 14" />
             </Icon>
             <span className="text-search-text tabular-nums">
-              {formatDuration(player.value)} today
+              {formatDuration(player.value)} Today
             </span>
           </p>
         }
