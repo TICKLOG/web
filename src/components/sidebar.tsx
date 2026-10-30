@@ -143,8 +143,10 @@ function BadgesIcon() {
 // sit centered with equal space on every side.
 export function Sidebar() {
   return (
-    <aside className="sticky top-0 flex h-dvh w-80 shrink-0 flex-col overflow-hidden border-r border-border px-5 pt-[30px] pb-5 transition-[width] duration-300 ease-out max-md:hidden collapsed:w-[85px] expanding:w-80">
-      <div className="relative flex items-center gap-2.5 pl-1.5">
+    // On phones: the full-screen menu below the top bar, shown while open.
+    <aside className="sticky top-0 flex h-dvh w-80 shrink-0 flex-col overflow-hidden border-r border-border px-5 pt-[30px] pb-5 transition-[width] duration-300 ease-out max-md:fixed max-md:inset-x-0 max-md:top-14 max-md:bottom-0 max-md:z-40 max-md:hidden max-md:h-auto max-md:w-full max-md:overflow-y-auto max-md:overscroll-contain max-md:border-r-0 max-md:bg-background max-md:px-4 max-md:pt-0 max-md:pb-[max(1.25rem,env(safe-area-inset-bottom))] collapsed:w-[85px] expanding:w-80 menu-open:max-md:flex menu-open:max-md:animate-[appear_150ms_ease-out]">
+      {/* The top bar shows the logo on phones. */}
+      <div className="relative flex items-center gap-2.5 pl-1.5 max-md:hidden">
         <Image
           src="/logo-bold.png"
           alt="TickLog logo"

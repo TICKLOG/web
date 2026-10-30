@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { connection } from "next/server";
 import { Suspense } from "react";
+import { MobileBar } from "@/components/mobile-bar";
 import { Sidebar } from "@/components/sidebar";
 import { preferencesScript } from "@/components/preferences-script";
 import "./globals.css";
@@ -45,11 +46,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <head>
         <script dangerouslySetInnerHTML={{ __html: preferencesScript }} />
       </head>
-      <body className="flex min-h-full">
+      <body className="flex min-h-full max-md:flex-col">
         {/* The sidebar depends on the login, so the page streams in once it's
             known, complete, instead of showing parts of the sidebar later. */}
         <Suspense>
           <RequestTime>
+            <MobileBar />
             <Sidebar />
             {children}
           </RequestTime>

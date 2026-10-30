@@ -22,16 +22,20 @@ function Tile({
   emptyText: string;
 }) {
   const empty = seconds < 60;
+  // Narrow boxes (phones, tablets): one compact row per tile, icon and label
+  // left, time right.
   return (
-    <div className="rounded-[10px] border border-search-border bg-background p-3">
-      <div className="flex items-center justify-between">
+    <div className="flex items-center justify-between rounded-[10px] border border-search-border bg-background px-3 py-2.5 @md:block @md:p-3">
+      <div className="flex items-center gap-2 @md:justify-between">
         <span className="text-[12px] font-semibold tracking-wider text-search-text uppercase">
           {label}
         </span>
-        <Icon className="size-4 text-search-text">{icon}</Icon>
+        <Icon className="size-4 text-search-text @max-md:order-first">
+          {icon}
+        </Icon>
       </div>
       <p
-        className={`mt-1 text-[18px] font-semibold tabular-nums ${empty ? "text-search-border" : "text-heading"}`}
+        className={`text-[16px] font-semibold tabular-nums @md:mt-1 @md:text-[18px] ${empty ? "text-search-border" : "text-heading"}`}
       >
         {empty ? emptyText : formatDuration(seconds)}
       </p>
@@ -56,12 +60,12 @@ export function Breakdown({
   const max = Math.max(1, ...data.servers.map((s) => s.seconds));
   return (
     <div
-      className={`rounded-[12px] border border-search-border bg-search p-4 ${className}`}
+      className={`@container rounded-[12px] border border-search-border bg-search p-4 ${className}`}
     >
       <p className="text-[12px] font-semibold tracking-wider text-search-text uppercase">
         Stats
       </p>
-      <div className="mt-3 grid grid-cols-3 gap-3">
+      <div className="mt-3 grid grid-cols-1 gap-2 @md:grid-cols-3 @md:gap-3">
         <Tile
           label="Servers"
           seconds={data.server}
@@ -116,12 +120,13 @@ export function Breakdown({
                 {i + 1}
               </span>
               <span
-                className={`flex w-56 items-center gap-2 font-mono ${s ? "text-heading" : "text-search-border"}`}
+                className={`flex min-w-0 flex-1 items-center gap-2 font-mono @md:w-56 @md:flex-none ${s ? "text-heading" : "text-search-border"}`}
               >
                 <ServerIcon server={s?.server ?? null} size={20} dim={!s} />
                 <span className="truncate">{s ? s.server : emptyText}</span>
               </span>
-              <span className="relative h-1.5 flex-1 rounded-full bg-search-border">
+              {/* No room for the bar in a narrow box. */}
+              <span className="relative h-1.5 flex-1 rounded-full bg-search-border @max-md:hidden">
                 {s && (
                   <span
                     className="absolute inset-y-0 left-0 rounded-full"
@@ -133,7 +138,7 @@ export function Breakdown({
                 )}
               </span>
               <span
-                className={`w-20 text-right tabular-nums ${s ? "text-search-text" : "text-search-border"}`}
+                className={`shrink-0 text-right tabular-nums @md:w-20 ${s ? "text-search-text" : "text-search-border"}`}
               >
                 {s ? formatDuration(s.seconds) : "—"}
               </span>

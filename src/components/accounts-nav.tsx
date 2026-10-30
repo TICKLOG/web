@@ -134,7 +134,7 @@ export function AccountsNav({ accounts }: { accounts: NavAccount[] }) {
                   aria-label={`Open ${account.name}'s Player Page`}
                   title="Open Player Page"
                   draggable={false}
-                  className="flex size-7 shrink-0 items-center justify-center rounded-[6px] text-search-text opacity-0 transition-colors group-hover/row:opacity-100 hover:text-green-400 focus-visible:opacity-100 collapsed:hidden"
+                  className="flex size-7 shrink-0 items-center justify-center rounded-[6px] text-search-text opacity-0 transition-colors group-hover/row:opacity-100 pointer-coarse:opacity-100 hover:text-green-400 focus-visible:opacity-100 collapsed:hidden"
                 >
                   {/* Lucide "external-link" */}
                   <Icon className="size-4">
@@ -150,7 +150,7 @@ export function AccountsNav({ accounts }: { accounts: NavAccount[] }) {
                   onClick={() =>
                     startTransition(() => unlinkAccount(account.uuid))
                   }
-                  className="mr-1 flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-[6px] text-search-text opacity-0 transition-colors group-hover/row:opacity-100 hover:text-red-500 focus-visible:opacity-100 collapsed:hidden"
+                  className="mr-1 flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-[6px] text-search-text opacity-0 transition-colors group-hover/row:opacity-100 pointer-coarse:opacity-100 hover:text-red-500 focus-visible:opacity-100 collapsed:hidden"
                 >
                   {/* Lucide "unlink" */}
                   <Icon className="size-4">

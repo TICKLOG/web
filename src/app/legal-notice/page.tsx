@@ -3,7 +3,7 @@ import { PageHeader } from "@/components/page-header";
 
 export default function LegalNoticePage() {
   return (
-    <main className="flex-1 px-10 pt-[30px] pb-10">
+    <main className="min-w-0 flex-1 px-4 pt-6 pb-10 md:px-10 md:pt-[30px]">
       <div className="max-w-2xl">
         <PageHeader
           title="Legal Notice"

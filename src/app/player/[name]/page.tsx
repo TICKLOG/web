@@ -123,13 +123,17 @@ export default async function PlayerPage({
   }
 
   return (
-    <main className="min-w-0 flex-1 px-10 pt-[30px] pb-10">
-      {/* As wide as the content, so streak and likes sit above the right edge of the activity box. */}
-      <div className="w-fit max-w-full">
-        <div className={`flex items-end gap-6 ${rise}`}>
+    <main className="min-w-0 flex-1 px-4 pt-6 pb-10 md:px-10 md:pt-[30px]">
+      {/* As wide as the content, so streak and likes sit above the right edge
+          of the activity box. On phones and tablets (below lg) everything is
+          stacked in one column. */}
+      <div className="max-w-full lg:w-fit">
+        <div
+          className={`flex flex-col gap-4 lg:flex-row lg:items-end lg:gap-6 ${rise}`}
+        >
           {/* At least as wide as the skin column, so the links start above the activity box. */}
-          <div className="min-w-80">
-            <h1 className="flex items-start gap-1 text-5xl font-extrabold tracking-tight text-heading">
+          <div className="min-w-0 lg:min-w-80">
+            <h1 className="flex items-start gap-1 text-4xl font-extrabold tracking-tight break-all text-heading sm:text-5xl">
               {profile.name}
               {linked && (
                 <span title="Linked Account" className="inline-flex shrink-0">
@@ -148,9 +152,9 @@ export default async function PlayerPage({
           {/* Moved down so the gap to the activity box matches the one between
               activity and stats (16px). Links on the left, streak and likes on
               the right. */}
-          <div className="flex min-w-0 flex-1 translate-y-2 items-center gap-2">
+          <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2 lg:translate-y-2">
             <PlayerLinks links={links} />
-            <div className="ml-auto flex shrink-0 items-center gap-2">
+            <div className="flex shrink-0 items-center gap-2 lg:ml-auto">
               <ProfileViews uuid={profile.uuid} views={views} />
               <Streak days={streak} />
               <LikeButton uuid={profile.uuid} {...liking} />
@@ -158,12 +162,14 @@ export default async function PlayerPage({
           </div>
         </div>
 
-        <div className="mt-6 flex items-start gap-6">
+        <div className="mt-6 flex flex-col gap-4 lg:flex-row lg:items-start lg:gap-6">
           {/* Capes clicked or hovered in the list show on the 3D skin. */}
           <CapePreviewProvider>
-            <div className="w-80 shrink-0">
+            {/* Below lg its boxes join the column: skin, activity and
+                stats, then capes and badges. */}
+            <div className="contents lg:block lg:w-80 lg:shrink-0">
               <div
-                className={`relative flex w-80 flex-col items-center overflow-hidden rounded-[12px] border border-search-border bg-search ${rise} [animation-delay:100ms]`}
+                className={`relative flex w-full flex-col lg:w-80 items-center overflow-hidden rounded-[12px] border border-search-border bg-search ${rise} [animation-delay:100ms]`}
               >
                 <p className="pointer-events-none absolute top-4 left-4 z-30 text-[12px] font-semibold tracking-wider text-search-text uppercase">
                   Skin
@@ -182,17 +188,17 @@ export default async function PlayerPage({
 
               <Capes
                 capes={capes}
-                className={`mt-4 ${rise} [animation-delay:150ms]`}
+                className={`order-3 lg:mt-4 ${rise} [animation-delay:150ms]`}
               />
               <Badges
                 badges={badges}
-                className={`mt-4 ${rise} [animation-delay:150ms]`}
+                className={`order-4 lg:mt-4 ${rise} [animation-delay:150ms]`}
               />
             </div>
           </CapePreviewProvider>
 
           {/* As tall as the skin box (480px canvas plus its border). */}
-          <div className="flex h-[482px] w-fit min-w-0 flex-col gap-4">
+          <div className="order-2 flex min-w-0 flex-col gap-4 lg:h-[482px] lg:w-fit">
             <Heatmap
               data={days}
               accent={color}

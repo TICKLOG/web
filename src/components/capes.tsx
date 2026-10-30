@@ -18,7 +18,7 @@ export function Capes({
   const preview = useCapePreview();
   return (
     <div
-      className={`w-80 rounded-[12px] border border-search-border bg-search p-4 ${className}`}
+      className={`w-full rounded-[12px] border border-search-border bg-search p-4 lg:w-80 ${className}`}
     >
       <p className="text-[12px] font-semibold tracking-wider text-search-text uppercase">
         Capes

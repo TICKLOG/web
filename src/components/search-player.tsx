@@ -41,7 +41,7 @@ export function SearchPlayer() {
   return (
     <form
       role="search"
-      className="mt-8"
+      className="mt-8 max-md:mt-4"
       onSubmit={(e) => {
         e.preventDefault();
         const name = new FormData(e.currentTarget).get("player")?.toString().trim();
@@ -72,7 +72,7 @@ export function SearchPlayer() {
           autoComplete="off"
           spellCheck={false}
           maxLength={16}
-          className="w-full min-w-0 bg-transparent text-[15px] text-heading outline-none placeholder:text-search-text collapsed:hidden [&::-webkit-search-cancel-button]:hidden"
+          className="w-full min-w-0 bg-transparent text-[15px] text-heading max-md:text-base outline-none placeholder:text-search-text collapsed:hidden [&::-webkit-search-cancel-button]:hidden"
         />
       </label>
     </form>

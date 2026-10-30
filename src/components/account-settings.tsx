@@ -101,7 +101,7 @@ function LinkField({
             placeholder={field.placeholder}
             spellCheck={false}
             autoComplete="off"
-            className="min-w-0 flex-1 bg-transparent text-heading outline-none placeholder:text-search-border"
+            className="min-w-0 flex-1 bg-transparent text-heading outline-none placeholder:text-search-border max-md:text-base"
           />
         </span>
       </label>

@@ -4,9 +4,24 @@
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 @custom-variant light (&:where([data-theme="light"], [data-theme="light"] *));
 /* `collapsed:` applies while the sidebar is collapsed, and while it expands
-   ("expanding"), so labels only appear once it has its full width. */
-@custom-variant collapsed (&:where([data-sidebar="collapsed"] *, [data-sidebar="expanding"] *));
-@custom-variant expanding (&:where([data-sidebar="expanding"] *));
+   ("expanding"), so labels only appear once it has its full width. Only from
+   md up: on phones the sidebar is the full-width menu and never collapsed. */
+@custom-variant collapsed {
+  @media (width >= 48rem) {
+    &:where([data-sidebar="collapsed"] *, [data-sidebar="expanding"] *) {
+      @slot;
+    }
+  }
+}
+@custom-variant expanding {
+  @media (width >= 48rem) {
+    &:where([data-sidebar="expanding"] *) {
+      @slot;
+    }
+  }
+}
+/* `menu-open:` applies while the phone menu is open. */
+@custom-variant menu-open (&:where([data-menu="open"] *));
 
 /* Light tokens; dark (OLED, the default via data-theme="dark") overrides them. */
 :root {
@@ -64,6 +79,11 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-minecraft: "Minecraft", monospace;
+}
+
+/* The page behind the open phone menu doesn't scroll. */
+html[data-menu="open"] body {
+  overflow: hidden;
 }
 
 body {

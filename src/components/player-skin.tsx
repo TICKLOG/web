@@ -229,7 +229,7 @@ export function PlayerSkin({
           drag.current = null;
           snapBack();
         }}
-        className="relative cursor-grab touch-none select-none active:cursor-grabbing"
+        className="relative cursor-grab touch-pan-y select-none active:cursor-grabbing"
         style={{ width, height }}
       >
         <canvas

@@ -6,7 +6,7 @@ import { IconRows } from "./icon-rows";
 // Scrolls after one row.
 export function Badges({ badges, className = "" }: { badges: Badge[]; className?: string }) {
   return (
-    <div className={`w-80 rounded-[12px] border border-search-border bg-search p-4 ${className}`}>
+    <div className={`w-full rounded-[12px] border border-search-border bg-search p-4 lg:w-80 ${className}`}>
       <p className="text-[12px] font-semibold tracking-wider text-search-text uppercase">Badges</p>
       {badges.length === 0 ? (
         <p className="mt-3 text-[14px] text-search-text">No badges yet.</p>
