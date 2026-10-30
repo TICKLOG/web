@@ -1,9 +1,9 @@
-import Image from "next/image";
 import Link from "next/link";
 import { formatDuration } from "@/lib/format";
 import type { LeaderboardRow } from "./leaderboard";
 import type { SkinTextures } from "@/lib/mojang";
 import { FitSkin } from "./fit-skin";
+import { Icon } from "./icon";
 
 const label =
   "self-start text-[12px] font-semibold tracking-wider text-search-text uppercase";
@@ -36,31 +36,29 @@ export function TopPlayer({
       className={`flex flex-col rounded-[12px] border border-search-border bg-search p-4 ${className}`}
     >
       <p className={label}>Top Player Today</p>
-      {/* Head, name and time, like a row on the leaderboard. */}
-      <Link
-        href={`/@${player.name.toLowerCase()}`}
-        className="group mt-3 flex min-w-0 items-center gap-3"
-      >
-        <Image
-          src={`/heads/${player.uuid}.png`}
-          alt=""
-          width={36}
-          height={36}
-          unoptimized
-          className="size-9 shrink-0 rounded-[4px] [image-rendering:pixelated]"
-        />
-        <span className="min-w-0">
-          <span className="block truncate text-[16px] font-semibold text-heading underline-offset-4 group-hover:underline">
-            {player.name}
-          </span>
-          <span className="block text-[13px] text-search-text tabular-nums">
-            {formatDuration(player.value)} today
-          </span>
-        </span>
-      </Link>
+      {/* Name tag over the head like in game, today's time under the feet. */}
       <FitSkin
         textures={textures}
-        className="mt-2 h-72 lg:h-auto lg:min-h-24 lg:flex-1"
+        className="mt-2 h-96 lg:h-auto lg:min-h-40 lg:flex-1"
+        above={
+          <Link
+            href={`/@${player.name.toLowerCase()}`}
+            className="max-w-full truncate rounded-[3px] bg-black/50 px-2 py-1 font-minecraft text-[14px] leading-none text-white transition-colors hover:bg-black/70"
+          >
+            <span className="text-yellow-400">#1</span> {player.name}
+          </Link>
+        }
+        below={
+          <p className="flex items-center gap-1.5 text-[14px]">
+            <Icon className="size-3.5 text-emerald-400">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </Icon>
+            <span className="text-search-text tabular-nums">
+              {formatDuration(player.value)} today
+            </span>
+          </p>
+        }
       />
     </div>
   );

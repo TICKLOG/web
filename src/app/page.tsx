@@ -161,7 +161,7 @@ export default async function Home() {
               <TopPlayer
                 player={topPlayer}
                 textures={topTextures}
-                className={`lg:w-72 lg:shrink-0 ${rise} [animation-delay:280ms]`}
+                className={`lg:w-80 lg:shrink-0 ${rise} [animation-delay:280ms]`}
               />
             </div>
           </div>
