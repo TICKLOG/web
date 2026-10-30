@@ -7,7 +7,7 @@ import { IconRows } from "./icon-rows";
 
 // The player's capes above the badges, side by side like on NameMC; the name
 // shows on hover. Hovering or clicking a cape previews it on the 3D skin.
-// Scrolls after two rows.
+// Scrolls after one row.
 export function Capes({
   capes,
   className = "",
@@ -28,8 +28,8 @@ export function Capes({
       ) : (
         <div className="mt-3">
           <IconRows
-            // Two rows of 48px capes with a 12px gap.
-            className="max-h-[108px]"
+            // One row of 48px capes.
+            className="max-h-12"
             gap="gap-3"
             onHover={preview?.hover}
             onPick={preview?.pick}

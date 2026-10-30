@@ -167,14 +167,16 @@ export default async function PlayerPage({
           </div>
         </div>
 
-        <div className="mt-6 flex flex-col gap-4 lg:flex-row lg:items-start lg:gap-6">
+        {/* Both columns end at the same height (lg): the skin box takes up the
+            difference on the left, the stats box on the right. */}
+        <div className="mt-6 flex flex-col gap-4 lg:flex-row lg:items-stretch lg:gap-6">
           {/* Capes clicked or hovered in the list show on the 3D skin. */}
           <CapePreviewProvider>
             {/* Below lg its boxes join the column: skin, activity and
                 stats, then capes and badges. */}
-            <div className="contents lg:block lg:w-80 lg:shrink-0">
+            <div className="contents lg:flex lg:w-80 lg:shrink-0 lg:flex-col lg:gap-4">
               <div
-                className={`relative flex w-full flex-col lg:w-80 items-center overflow-hidden rounded-[12px] border border-search-border bg-search ${rise} [animation-delay:100ms]`}
+                className={`relative flex w-full flex-col items-center overflow-hidden rounded-[12px] border border-search-border bg-search lg:w-80 lg:flex-1 lg:justify-center ${rise} [animation-delay:100ms]`}
               >
                 <p className="pointer-events-none absolute top-4 left-4 z-30 text-[12px] font-semibold tracking-wider text-search-text uppercase">
                   Skin
@@ -193,11 +195,11 @@ export default async function PlayerPage({
 
               <Capes
                 capes={capes}
-                className={`order-3 lg:mt-4 ${rise} [animation-delay:150ms]`}
+                className={`order-3 ${rise} [animation-delay:150ms]`}
               />
               <Badges
                 badges={badges}
-                className={`order-4 lg:mt-4 ${rise} [animation-delay:150ms]`}
+                className={`order-4 ${rise} [animation-delay:150ms]`}
               />
             </div>
           </CapePreviewProvider>
@@ -220,7 +222,7 @@ export default async function PlayerPage({
               groups={statGroups.groups}
               servers={statGroups.servers}
               emptyText={emptyText}
-              className={`${rise} [animation-delay:250ms]`}
+              className={`lg:flex-1 ${rise} [animation-delay:250ms]`}
             />
           </div>
         </div>

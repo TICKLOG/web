@@ -49,14 +49,14 @@ function Toggle<T extends string>({
   onChange: (v: T) => void;
 }) {
   return (
-    <span className="flex h-6 shrink-0 items-center gap-0.5 rounded-[7px] border border-search-border bg-search p-0.5">
+    <span className="flex h-5 shrink-0 items-center gap-0.5 rounded-[6px] border border-search-border bg-search p-0.5">
       {options.map(([key, label]) => (
         <button
           key={key}
           type="button"
           aria-pressed={value === key}
           onClick={() => onChange(key)}
-          className={`flex h-full cursor-pointer items-center rounded-[5px] px-1.5 text-[11px] font-medium transition-colors ${
+          className={`flex h-full cursor-pointer items-center rounded-[4px] px-1.5 text-[11px] leading-none font-medium transition-colors ${
             value === key
               ? "bg-search-border text-heading"
               : "text-search-text hover:text-heading"
@@ -69,7 +69,8 @@ function Toggle<T extends string>({
   );
 }
 
-// One stat, like the playtime tiles; a compact row in narrow boxes.
+// One stat, like the playtime tiles; a compact row in narrow boxes. A tile
+// with a toggle shows it next to its name, in place of the icon.
 function Tile({
   label,
   icon,
@@ -77,7 +78,7 @@ function Tile({
   emptyText,
   toggle,
 }: {
-  label: string;
+  label: React.ReactNode;
   icon: React.ReactNode;
   value: number | null;
   emptyText: string;
@@ -85,22 +86,22 @@ function Tile({
 }) {
   return (
     <div className="flex items-center justify-between gap-2 rounded-[10px] border border-search-border bg-background px-3 py-2.5 @md:block @md:p-3">
-      <div className="flex min-w-0 items-center gap-2 @md:justify-between">
+      <div className="flex min-w-0 items-center gap-2 @md:h-5 @md:justify-between">
         <span className="truncate text-[12px] font-semibold tracking-wider text-search-text uppercase">
           {label}
         </span>
-        <Icon className="size-4 text-search-text @max-md:order-first">
+        <Icon
+          className={`size-4 text-search-text @max-md:order-first ${toggle ? "@md:hidden" : ""}`}
+        >
           {icon}
         </Icon>
-      </div>
-      <div className="flex items-center justify-end gap-2 @md:mt-1 @md:justify-between">
-        <p
-          className={`text-[16px] font-semibold tabular-nums @md:text-[18px] ${value === null ? "text-search-border" : "text-heading"} @max-md:order-last`}
-        >
-          {value === null ? emptyText : format(value)}
-        </p>
         {toggle}
       </div>
+      <p
+        className={`text-[16px] font-semibold tabular-nums @md:mt-1 @md:text-[18px] ${value === null ? "text-search-border" : "text-heading"}`}
+      >
+        {value === null ? emptyText : format(value)}
+      </p>
     </div>
   );
 }
@@ -256,7 +257,12 @@ export function StatsBox({
       </div>
       <div className="mt-3 grid grid-cols-1 gap-2 @md:grid-cols-3 @md:gap-3">
         <Tile
-          label="Blocks Traveled"
+          // Wide tiles need the room for the toggle.
+          label={
+            <>
+              <span className="@md:hidden">Blocks </span>Traveled
+            </>
+          }
           value={value(travel)}
           emptyText={empty}
           toggle={
