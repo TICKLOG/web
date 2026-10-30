@@ -14,7 +14,7 @@ type Filter =
 const FILTER_LABELS = {
   all: "All",
   singleplayer: "Singleplayer",
-  multiplayer: "Multiplayer",
+  multiplayer: "Servers",
 } as const;
 
 // Sum of the groups the filter covers.
@@ -251,7 +251,7 @@ export function StatsBox({
         <p className="text-[12px] font-semibold tracking-wider text-search-text uppercase">
           Stats
         </p>
-        {!emptyText && hasData && (
+        {!emptyText && (hasData || servers.length > 0) && (
           <FilterMenu servers={servers} filter={filter} onChange={setFilter} />
         )}
       </div>

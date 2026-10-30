@@ -1,6 +1,6 @@
-import { and, eq, sql } from "drizzle-orm";
+import { and, desc, eq, isNull, sql } from "drizzle-orm";
 import { db } from "@/db";
-import { hiddenServers, servers, stats } from "@/db/schema";
+import { hiddenServers, playtime, servers, stats } from "@/db/schema";
 
 export const STAT_KEYS = [
   "walked",
@@ -56,13 +56,14 @@ export type StatGroup = {
 };
 
 // All-time stats per kind and server, for the filter on the player page.
+// The filter lists every server the player has played on, most played first.
 // Servers stay listed only when verified and not hidden by the player; their
-// numbers still count towards "All" and "Multiplayer" like playtime does.
+// numbers still count towards "All" and "Servers" like playtime does.
 export async function loadStats(
   uuid: string,
 ): Promise<{ groups: StatGroup[]; servers: string[] }> {
   const sum = (c: (typeof stats)[StatKey]) => sql<number>`sum(${c})::int`;
-  const rows = await db
+  const statRows = db
     .select({
       kind: stats.kind,
       server: stats.server,
@@ -87,6 +88,28 @@ export async function loadStats(
     )
     .where(eq(stats.uuid, uuid))
     .groupBy(stats.kind, stats.server);
+  const played = db
+    .select({ server: playtime.server })
+    .from(playtime)
+    .innerJoin(servers, eq(servers.address, playtime.server))
+    .leftJoin(
+      hiddenServers,
+      and(
+        eq(hiddenServers.uuid, playtime.uuid),
+        eq(hiddenServers.server, playtime.server),
+      ),
+    )
+    .where(
+      and(
+        eq(playtime.uuid, uuid),
+        eq(playtime.kind, "server"),
+        eq(servers.reachable, true),
+        isNull(hiddenServers.server),
+      ),
+    )
+    .groupBy(playtime.server)
+    .orderBy(desc(sql`sum(${playtime.seconds})`));
+  const [rows, playedRows] = await Promise.all([statRows, played]);
 
   const groups = rows.map(({ kind, server, listed, ...values }) => ({
     kind: kind as StatGroup["kind"],
@@ -97,5 +120,8 @@ export async function loadStats(
   const listed = rows
     .filter((r) => r.kind === "server" && r.listed && r.server)
     .map((r) => r.server);
-  return { groups, servers: [...new Set(listed)].sort() };
+  return {
+    groups,
+    servers: [...new Set([...playedRows.map((r) => r.server), ...listed])],
+  };
 }
