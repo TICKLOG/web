@@ -30,42 +30,20 @@ export function LegalSection({
   );
 }
 
-// Bordered list of label/value rows, like the lists in the settings.
-export function InfoList({ rows }: { rows: [string, React.ReactNode][] }) {
-  return (
-    <dl className="divide-y divide-search-border rounded-[14px] border border-search-border">
-      {rows.map(([label, value]) => (
-        <div key={label} className="flex gap-6 px-5 py-3.5">
-          <dt className="w-24 shrink-0 text-search-text">{label}</dt>
-          <dd className="min-w-0 text-heading">{value}</dd>
-        </div>
-      ))}
-    </dl>
-  );
-}
-
-// Name, address and email of the operator.
+// Name, address and email of the operator, as a plain address block.
 export function OperatorList() {
   return (
-    <InfoList
-      rows={[
-        ["Name", OPERATOR.name],
-        [
-          "Address",
-          OPERATOR.address.map((line) => (
-            <span key={line} className="block">
-              {line}
-            </span>
-          )),
-        ],
-        [
-          "Email",
-          <a key="email" href={`mailto:${OPERATOR.email}`}>
-            {OPERATOR.email}
-          </a>,
-        ],
-      ]}
-    />
+    <address className="text-[14px] leading-6 text-search-text not-italic">
+      <strong className="block text-[15px]">{OPERATOR.name}</strong>
+      {OPERATOR.address.map((line) => (
+        <span key={line} className="block">
+          {line}
+        </span>
+      ))}
+      <a href={`mailto:${OPERATOR.email}`} className="mt-2 inline-block">
+        {OPERATOR.email}
+      </a>
+    </address>
   );
 }
 

@@ -57,6 +57,29 @@ function GitHubIcon() {
   );
 }
 
+// Lucide "life-buoy" icon.
+function SupportIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.75}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      className="size-5 shrink-0"
+    >
+      <circle cx="12" cy="12" r="10" />
+      <path d="m4.93 4.93 4.24 4.24" />
+      <path d="m14.83 9.17 4.24-4.24" />
+      <path d="m14.83 14.83 4.24 4.24" />
+      <path d="m9.17 14.83-4.24 4.24" />
+      <circle cx="12" cy="12" r="4" />
+    </svg>
+  );
+}
+
 // Lucide "scale" icon.
 function LegalNoticeIcon() {
   return (
@@ -152,6 +175,7 @@ export function Sidebar() {
           {/* Not published yet: modrinth.com/mod/ticklog once it is. */}
           <NavItem label="Download" href="https://modrinth.com/mod/ticklog" icon={<ModrinthIcon />} />
           <NavItem label="GitHub" href="https://github.com/ticklog" icon={<GitHubIcon />} />
+          <NavItem label="Support" href="https://github.com/TICKLOG/mod/issues" icon={<SupportIcon />} />
           <NavDivider />
           <NavItem label="Legal Notice" href="/legal-notice" icon={<LegalNoticeIcon />} />
           <NavItem label="Privacy Policy" href="/privacy-policy" icon={<PrivacyPolicyIcon />} />

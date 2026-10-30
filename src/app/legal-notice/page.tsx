@@ -14,37 +14,38 @@ export default function LegalNoticePage() {
           <OperatorList />
         </LegalSection>
 
-        <LegalSection title="About TickLog" delay={105}>
+        <LegalSection title="Purpose" delay={105}>
           <p>
-            TickLog is a free, non-commercial website and Minecraft mod that
-            tracks playtime and shows player stats. Its purpose is to inform
-            about Minecraft players and their playtime.
+            TickLog is a website and Minecraft mod for recording playtime and
+            displaying player statistics. Basic orientation: information about
+            Minecraft players and their playtime.
           </p>
         </LegalSection>
 
-        <LegalSection title="Not Affiliated With Mojang" delay={140}>
+        <LegalSection title="Disclaimer" delay={140}>
           <p>
             <strong>
               Not an official Minecraft service. Not approved by or associated
               with Mojang or Microsoft.
             </strong>{" "}
             Minecraft is a trademark of Mojang AB. Skins, capes and player names
-            are loaded from Mojang.
+            are provided by Mojang.
           </p>
         </LegalSection>
 
-        <LegalSection title="Links to Other Websites" delay={175}>
+        <LegalSection title="External Links" delay={175}>
           <p>
-            TickLog links to other websites, including the Twitch, YouTube, X
-            and Discord links players add to their pages. Their operators are
-            responsible for their content. If we learn of unlawful content
-            behind a link, we remove the link.
+            TickLog contains links to external websites, including links added
+            by players to their profiles. The respective operators are solely
+            responsible for the content of these websites. Upon becoming aware
+            of unlawful content, the corresponding link will be removed without
+            delay.
           </p>
         </LegalSection>
 
         <LegalSection title="Source Code" delay={210}>
           <p>
-            The website and the mod are open source on{" "}
+            The source code of the website and the mod is available on{" "}
             <a href="https://github.com/TICKLOG">GitHub</a>.
           </p>
         </LegalSection>
