@@ -1,3 +1,5 @@
+import { after } from "next/server";
+import { sampleOnline } from "@/lib/online";
 import { creditBeat, KINDS, type Kind, normalizeServer, verifiedServer } from "@/lib/playtime";
 
 // Sent by the mod every 30 seconds (and when the player switches between
@@ -13,5 +15,6 @@ export async function POST(request: Request) {
   if (!(await creditBeat(token, kind, server))) {
     return Response.json({ error: "Unknown token" }, { status: 401 });
   }
+  after(() => sampleOnline().catch(console.error));
   return Response.json({ ok: true });
 }

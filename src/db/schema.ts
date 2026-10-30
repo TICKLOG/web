@@ -98,6 +98,13 @@ export const modSessions = ticklog.table("mod_sessions", {
   createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
 });
 
+// Players online with the mod, the most seen in each 10-minute window (UTC).
+// Windows nobody was online in have no row.
+export const onlineSamples = ticklog.table("online_samples", {
+  at: timestamp({ withTimezone: true }).primaryKey(),
+  players: integer().notNull(),
+});
+
 // Seconds played per player, UTC day and place. `kind` is launcher,
 // singleplayer or server; `server` is the address for servers, else "".
 export const playtime = ticklog.table(
