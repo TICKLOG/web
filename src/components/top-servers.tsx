@@ -2,7 +2,7 @@ import { formatDuration } from "@/lib/format";
 import type { TopServer } from "@/lib/site-stats";
 import { ServerIcon } from "./server-icon";
 
-const SLOTS = 5;
+const SLOTS = 3;
 
 // Today's most played servers on the home page, like the top servers on
 // player pages. Empty slots keep the list's shape.
@@ -46,13 +46,6 @@ export function TopServers({
                     style={{ width: `${(s.seconds / max) * 100}%` }}
                   />
                 )}
-              </span>
-              <span
-                className={`shrink-0 text-right tabular-nums @max-md:hidden @md:w-24 ${s ? "text-search-text" : "text-search-border"}`}
-              >
-                {s
-                  ? `${s.players} ${s.players === 1 ? "player" : "players"}`
-                  : "—"}
               </span>
               <span
                 className={`shrink-0 text-right tabular-nums @md:w-20 ${s ? "text-search-text" : "text-search-border"}`}

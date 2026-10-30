@@ -37,22 +37,22 @@ export async function loadSiteStats(): Promise<SiteStats> {
   };
 }
 
-export type TopServer = { server: string; seconds: number; players: number };
+export type TopServer = { server: string; seconds: number };
 
-// The most played verified servers today (UTC), with how many players were
-// on them. Time a player hid for a server doesn't count.
+// The most played verified servers today (UTC). Time a player hid for a
+// server doesn't count.
 export async function loadTopServersToday(): Promise<TopServer[]> {
   "use cache";
   cacheLife({ stale: 30, revalidate: 60, expire: 600 });
   const rows = await db.execute<TopServer>(sql`
-    select p.server, sum(p.seconds)::int as seconds, count(distinct p.uuid)::int as players
+    select p.server, sum(p.seconds)::int as seconds
     from ticklog.playtime p
     join ticklog.servers s on s.address = p.server and s.reachable
     left join ticklog.hidden_servers h on h.uuid = p.uuid and h.server = p.server
     where p.kind = 'server' and p.day = (now() at time zone 'utc')::date and h.server is null
     group by p.server
     order by seconds desc
-    limit 5
+    limit 3
   `);
   return [...rows];
 }
