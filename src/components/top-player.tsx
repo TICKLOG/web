@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { formatDuration } from "@/lib/format";
+import { locatorColor } from "@/lib/minecraft";
 import type { LeaderboardRow } from "./leaderboard";
 import type { SkinTextures } from "@/lib/mojang";
-import { PlayerSkin } from "./player-skin";
+import { FitSkin } from "./fit-skin";
 
 const label =
   "self-start text-[12px] font-semibold tracking-wider text-search-text uppercase";
@@ -28,25 +29,43 @@ export function TopPlayer({
         </p>
       </div>
     );
+  const color = locatorColor(player.uuid);
   return (
-    // Like the skin box on profiles: the skin turns while dragged, the name
-    // opens the profile.
+    // Like the skin box on profiles: the skin turns while dragged, and the
+    // player's locator color glows behind it and frames the name.
     <div
-      className={`relative flex flex-col items-center rounded-[12px] border border-search-border bg-search p-4 ${className}`}
+      className={`relative flex flex-col overflow-hidden rounded-[12px] border border-search-border bg-search p-4 ${className}`}
     >
-      <p className={label}>Top Player Today</p>
-      <div className="my-auto flex flex-col items-center">
-        <PlayerSkin textures={textures} width={240} height={320} />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background: `radial-gradient(ellipse 70% 55% at 50% 55%, ${color}2e, transparent 70%)`,
+        }}
+      />
+      <div className="relative flex items-center justify-between">
+        <p className={label}>Top Player Today</p>
+        <span className="font-minecraft text-lg leading-none text-yellow-400">
+          #1
+        </span>
+      </div>
+      <FitSkin
+        textures={textures}
+        className="h-72 lg:h-auto lg:min-h-28 lg:flex-1"
+      />
+      <div className="relative flex items-center gap-3" style={{ color }}>
+        <span className="h-px flex-1 bg-current opacity-60" />
         <Link
           href={`/@${player.name.toLowerCase()}`}
-          className="mt-1 text-[16px] font-semibold text-heading underline-offset-4 hover:underline"
+          className="max-w-[70%] truncate text-[16px] font-semibold text-heading underline-offset-4 hover:underline"
         >
           {player.name}
         </Link>
-        <p className="mt-0.5 text-[14px] text-search-text tabular-nums">
-          {formatDuration(player.value)} today
-        </p>
+        <span className="h-px flex-1 bg-current opacity-60" />
       </div>
+      <p className="relative mt-1 text-center text-[13px] text-search-text tabular-nums">
+        {formatDuration(player.value)} today
+      </p>
     </div>
   );
 }

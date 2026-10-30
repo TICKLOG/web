@@ -156,7 +156,7 @@ export default async function Home() {
             <div className="mt-3 flex flex-1 flex-col gap-3 lg:flex-row">
               <TopServers
                 servers={topServers}
-                className={`min-w-0 lg:flex-1 ${rise} [animation-delay:245ms]`}
+                className={`min-w-0 lg:flex-1 lg:self-start ${rise} [animation-delay:245ms]`}
               />
               <TopPlayer
                 player={topPlayer}
