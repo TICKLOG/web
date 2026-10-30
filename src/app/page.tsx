@@ -3,7 +3,10 @@ import { Icon } from "@/components/icon";
 import { OnlineChart } from "@/components/online-chart";
 import { PageHeader } from "@/components/page-header";
 import { loadOnline } from "@/lib/online";
+import { TopPlayer } from "@/components/top-player";
 import { TopServers } from "@/components/top-servers";
+import { loadLeaderboard } from "@/lib/leaderboard";
+import { fetchTextures } from "@/lib/mojang";
 import { loadSiteStats, loadTopServersToday } from "@/lib/site-stats";
 
 // The page builds up block by block, like the settings page.
@@ -71,11 +74,14 @@ function AdBox({ className }: { className: string }) {
 }
 
 export default async function Home() {
-  const [stats, online, topServers] = await Promise.all([
+  const [stats, online, topServers, leaderboard] = await Promise.all([
     loadSiteStats(),
     loadOnline(),
     loadTopServersToday(),
+    loadLeaderboard(),
   ]);
+  const topPlayer = leaderboard["playtime:today"]?.[0] ?? null;
+  const topTextures = topPlayer ? await fetchTextures(topPlayer.uuid) : null;
   return (
     <main className="flex min-w-0 flex-1 flex-col px-4 pt-6 pb-10 md:px-10 md:pt-[30px]">
       <div className="flex flex-1 flex-col">
@@ -147,13 +153,20 @@ export default async function Home() {
               data={online}
               className={`mt-3 ${rise} [animation-delay:210ms]`}
             />
-            <TopServers
-              servers={topServers}
-              className={`mt-3 flex-1 ${rise} [animation-delay:245ms]`}
-            />
+            <div className="mt-3 flex flex-1 flex-col gap-3 lg:flex-row">
+              <TopServers
+                servers={topServers}
+                className={`min-w-0 lg:flex-1 ${rise} [animation-delay:245ms]`}
+              />
+              <TopPlayer
+                player={topPlayer}
+                textures={topTextures}
+                className={`lg:w-64 lg:shrink-0 ${rise} [animation-delay:280ms]`}
+              />
+            </div>
           </div>
           <AdBox
-            className={`xl:w-64 xl:shrink-0 ${rise} [animation-delay:280ms]`}
+            className={`xl:w-64 xl:shrink-0 ${rise} [animation-delay:315ms]`}
           />
         </div>
       </div>
