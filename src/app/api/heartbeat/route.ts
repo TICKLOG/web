@@ -1,7 +1,8 @@
 import { creditBeat, KINDS, type Kind, normalizeServer, verifiedServer } from "@/lib/playtime";
 
 // Sent by the mod every 30 seconds (and when the player switches between
-// launcher, singleplayer and servers) for the stretch that just ended.
+// launcher, singleplayer and servers) for the stretch that just ended, with
+// the stats counted during it (mod 1.1.0 and newer).
 export async function POST(request: Request) {
   const auth = request.headers.get("authorization") ?? "";
   const token = auth.startsWith("Bearer ") ? auth.slice("Bearer ".length) : "";
@@ -10,7 +11,7 @@ export async function POST(request: Request) {
   if (!token || !kind) return Response.json({ error: "Bad request" }, { status: 400 });
   const address = kind === "server" && typeof body.server === "string" ? normalizeServer(body.server) : "";
   const server = await verifiedServer(token, address);
-  if (!(await creditBeat(token, kind, server))) {
+  if (!(await creditBeat(token, kind, server, body.stats))) {
     return Response.json({ error: "Unknown token" }, { status: 401 });
   }
   return Response.json({ ok: true });

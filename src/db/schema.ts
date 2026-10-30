@@ -114,6 +114,27 @@ export const playtime = ticklog.table(
 
 // Server addresses the mod reported, checked with a server list ping. Only
 // reachable ones are listed on profiles and get an icon.
+// Stats counted by the mod (walked and flown in blocks), per UTC day and,
+// like playtime, per kind and server.
+export const stats = ticklog.table(
+  "stats",
+  {
+    uuid: uuid().notNull(),
+    day: date().notNull(),
+    kind: text().notNull(),
+    server: text().notNull().default(""),
+    walked: integer().notNull().default(0),
+    flown: integer().notNull().default(0),
+    broken: integer().notNull().default(0),
+    placed: integer().notNull().default(0),
+    deaths: integer().notNull().default(0),
+    jumps: integer().notNull().default(0),
+    mobKills: integer().notNull().default(0),
+    playerKills: integer().notNull().default(0),
+  },
+  (t) => [primaryKey({ columns: [t.uuid, t.day, t.kind, t.server] })],
+);
+
 export const servers = ticklog.table("servers", {
   // Main domain the time is listed under (mc.hypixel.net -> hypixel.net).
   address: text().primaryKey(),

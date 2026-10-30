@@ -63,7 +63,7 @@ export function Breakdown({
       className={`@container rounded-[12px] border border-search-border bg-search p-4 ${className}`}
     >
       <p className="text-[12px] font-semibold tracking-wider text-search-text uppercase">
-        Stats
+        Playtime
       </p>
       <div className="mt-3 grid grid-cols-1 gap-2 @md:grid-cols-3 @md:gap-3">
         <Tile

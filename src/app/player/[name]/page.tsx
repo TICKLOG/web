@@ -12,6 +12,7 @@ import { LikeButton } from "@/components/like-button";
 import { PlayerLinks } from "@/components/player-links";
 import { ProfileViews } from "@/components/profile-views";
 import { PlayerSkin } from "@/components/player-skin";
+import { StatsBox } from "@/components/stats-box";
 import { Streak } from "@/components/streak";
 import { db } from "@/db";
 import { likes, minecraftAccounts, playerBadges, users } from "@/db/schema";
@@ -19,6 +20,7 @@ import { getCurrentUser } from "@/lib/auth/user";
 import { BADGES } from "@/lib/badges";
 import { capeHash, loadCapes, rememberCape } from "@/lib/capes";
 import { locatorColor } from "@/lib/minecraft";
+import { loadStats } from "@/lib/stats";
 import { loadViews } from "@/lib/views";
 import { fetchTextures, lookupPlayer } from "@/lib/mojang";
 import {
@@ -90,6 +92,7 @@ export default async function PlayerPage({
     { hidden, ...links },
     views,
     capes,
+    statsData,
     ...playtime
   ] = await Promise.all([
     isLinked(profile.uuid),
@@ -99,6 +102,7 @@ export default async function PlayerPage({
     loadPlayerSettings(profile.uuid),
     loadViews(profile.uuid),
     loadCapes(profile.uuid),
+    loadStats(profile.uuid),
     loadDays(profile.uuid),
     loadBreakdown(profile.uuid),
     loadStreak(profile.uuid),
@@ -111,6 +115,7 @@ export default async function PlayerPage({
       ]
     : playtime;
   const emptyText = hidden ? "Hidden" : undefined;
+  const statGroups = hidden ? { groups: [], servers: [] } : statsData;
   const color = locatorColor(profile.uuid);
   // Searched players keep every cape they were seen wearing. Saved after the
   // response; a cape seen for the first time is added to the list here.
@@ -197,8 +202,8 @@ export default async function PlayerPage({
             </div>
           </CapePreviewProvider>
 
-          {/* As tall as the skin box (480px canvas plus its border). */}
-          <div className="order-2 flex min-w-0 flex-col gap-4 lg:h-[482px] lg:w-fit">
+          {/* Activity, playtime and stats. */}
+          <div className="order-2 flex min-w-0 flex-col gap-4 lg:w-fit">
             <Heatmap
               data={days}
               accent={color}
@@ -209,7 +214,13 @@ export default async function PlayerPage({
               accent={color}
               data={breakdown}
               emptyText={emptyText}
-              className={`min-h-0 flex-1 ${rise} [animation-delay:200ms]`}
+              className={`${rise} [animation-delay:200ms]`}
+            />
+            <StatsBox
+              groups={statGroups.groups}
+              servers={statGroups.servers}
+              emptyText={emptyText}
+              className={`${rise} [animation-delay:250ms]`}
             />
           </div>
         </div>
