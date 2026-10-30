@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { StatGroup, StatKey, StatValues } from "@/lib/stats";
+import { CountUp } from "./count-up";
 import { Icon } from "./icon";
 import { ServerIcon } from "./server-icon";
 
@@ -98,7 +99,7 @@ function Tile({
       <p
         className={`text-[16px] font-semibold tabular-nums @md:mt-1 @md:text-[18px] ${value === null ? "text-search-border" : "text-heading"}`}
       >
-        {value === null ? emptyText : format(value)}
+        {value === null ? emptyText : <CountUp value={value} format={format} />}
       </p>
     </div>
   );
