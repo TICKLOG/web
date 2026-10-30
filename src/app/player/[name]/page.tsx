@@ -1,4 +1,5 @@
 import { and, count, eq, isNotNull } from "drizzle-orm";
+import { after } from "next/server";
 import { Badges } from "@/components/badges";
 import { Breakdown } from "@/components/breakdown";
 import { CapePreviewProvider } from "@/components/cape-preview";
@@ -16,7 +17,7 @@ import { db } from "@/db";
 import { likes, minecraftAccounts, playerBadges, users } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth/user";
 import { BADGES } from "@/lib/badges";
-import { loadCapes, rememberCape } from "@/lib/capes";
+import { capeHash, loadCapes, rememberCape } from "@/lib/capes";
 import { locatorColor } from "@/lib/minecraft";
 import { loadViews } from "@/lib/views";
 import { fetchTextures, lookupPlayer } from "@/lib/mojang";
@@ -79,33 +80,47 @@ export default async function PlayerPage({
         subtitle={`No Minecraft player is named ${name}.`}
       />
     );
-  const [linked, textures, badges, liking, { hidden, ...links }, views] =
-    await Promise.all([
-      isLinked(profile.uuid),
-      fetchTextures(profile.uuid),
-      loadBadges(profile.uuid),
-      loadLikes(profile.uuid),
-      loadPlayerSettings(profile.uuid),
-      loadViews(profile.uuid),
-    ]);
-  // Private profiles (account setting) show "Hidden" instead of playtime.
+  // Playtime is loaded alongside and dropped for private profiles (account
+  // setting), which show "Hidden" instead.
+  const [
+    linked,
+    textures,
+    badges,
+    liking,
+    { hidden, ...links },
+    views,
+    capes,
+    ...playtime
+  ] = await Promise.all([
+    isLinked(profile.uuid),
+    fetchTextures(profile.uuid),
+    loadBadges(profile.uuid),
+    loadLikes(profile.uuid),
+    loadPlayerSettings(profile.uuid),
+    loadViews(profile.uuid),
+    loadCapes(profile.uuid),
+    loadDays(profile.uuid),
+    loadBreakdown(profile.uuid),
+    loadStreak(profile.uuid),
+  ]);
   const [days, breakdown, streak] = hidden
     ? [
         new Map<string, number>(),
         { server: 0, singleplayer: 0, launcher: 0, servers: [] },
         0,
       ]
-    : await Promise.all([
-        loadDays(profile.uuid),
-        loadBreakdown(profile.uuid),
-        loadStreak(profile.uuid),
-      ]);
+    : playtime;
   const emptyText = hidden ? "Hidden" : undefined;
   const color = locatorColor(profile.uuid);
-  // Searched players keep every cape they were seen wearing.
-  if (textures?.cape)
-    await rememberCape(profile.uuid, textures.cape).catch(console.error);
-  const capes = await loadCapes(profile.uuid);
+  // Searched players keep every cape they were seen wearing. Saved after the
+  // response; a cape seen for the first time is added to the list here.
+  if (textures?.cape) {
+    const hash = capeHash(textures.cape);
+    after(() =>
+      rememberCape(profile.uuid, textures.cape!).catch(console.error),
+    );
+    if (!capes.some((c) => c.hash === hash)) capes.push({ hash, alias: null });
+  }
 
   return (
     <main className="min-w-0 flex-1 px-10 pt-[30px] pb-10">
