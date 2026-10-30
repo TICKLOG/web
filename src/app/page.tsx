@@ -57,15 +57,9 @@ function AdBox({ className }: { className: string }) {
         <path d="M6 14a12 12 0 0 0 2.4 7.2 2 2 0 0 0 3.2-2.4A8 8 0 0 1 10 14" />
         <path d="M8 6v8" />
       </Icon>
-      <p className="mt-4 text-[17px] font-semibold text-heading">
-        Your Ad Here
-      </p>
-      <p className="mt-1.5 max-w-60 text-[14px] leading-6 text-search-text">
-        Reach Minecraft players who track their playtime with TickLog.
-      </p>
       <a
         href="mailto:info@ticklog.net?subject=Advertising%20on%20TickLog"
-        className="mt-5 flex h-10 items-center rounded-[10px] bg-heading px-4 text-[14px] font-medium text-background transition-opacity hover:opacity-85"
+        className="mt-4 flex h-10 items-center rounded-[10px] bg-heading px-4 text-[14px] font-medium text-background transition-opacity hover:opacity-85"
       >
         Get in Contact
       </a>
