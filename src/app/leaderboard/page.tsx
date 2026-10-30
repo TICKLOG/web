@@ -1,7 +1,14 @@
-import { ComingSoon } from "@/components/coming-soon";
+import { Leaderboard } from "@/components/leaderboard";
+import { loadLeaderboard } from "@/lib/leaderboard";
 
-// Placeholder until the mod sends stats; the list itself is ready in
-// components/leaderboard.tsx.
-export default function LeaderboardPage() {
-  return <ComingSoon title="Leaderboard" />;
+// Most played players today, this month and all time.
+export default async function LeaderboardPage() {
+  const data = await loadLeaderboard();
+  return (
+    <main className="min-w-0 flex-1 px-4 pt-6 pb-10 md:px-10 md:pt-[30px]">
+      <div className="max-w-3xl">
+        <Leaderboard data={data} />
+      </div>
+    </main>
+  );
 }

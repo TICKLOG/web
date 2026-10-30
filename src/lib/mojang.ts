@@ -72,3 +72,20 @@ async function cachedTextures(uuid: string): Promise<SkinTextures | null> {
     model: SKIN?.metadata?.model === "slim" ? "slim" : "default",
   };
 }
+
+// The player's current name by UUID, or null if Mojang doesn't know it. Kept
+// for an hour; for players we have no name stored for.
+export async function fetchName(uuid: string): Promise<string | null> {
+  return cachedName(uuid).catch(() => null);
+}
+
+async function cachedName(uuid: string): Promise<string | null> {
+  "use cache";
+  cacheLife({ stale: 300, revalidate: 3600, expire: 86400 });
+  const res = await fetch(`https://sessionserver.mojang.com/session/minecraft/profile/${uuid.replace(/-/g, "")}`, {
+    cache: "no-store",
+  });
+  if (res.status === 204 || res.status === 404) return null;
+  if (res.status !== 200) throw new Error(`Mojang profile failed: ${res.status}`);
+  return ((await res.json()) as { name: string }).name;
+}

@@ -16,34 +16,13 @@ const CLOCK = (
     <polyline points="12 6 12 12 16 14" />
   </>
 );
-const FOOTPRINTS = (
-  <>
-    <path d="M4 16v-2.38C4 11.5 2.97 10.5 3 8c.03-2.72 1.49-6 4.5-6C9.37 2 10 3.8 10 5.5c0 3.11-2 5.66-2 8.68V16a2 2 0 1 1-4 0Z" />
-    <path d="M20 20v-2.38c0-2.12 1.03-3.12 1-5.62-.03-2.72-1.49-6-4.5-6C14.63 6 14 7.8 14 9.5c0 3.11 2 5.66 2 8.68V20a2 2 0 1 0 4 0Z" />
-    <path d="M16 17h4" />
-    <path d="M4 13h4" />
-  </>
-);
-
-// Stats the leaderboard can rank by.
-const STATS = [
-  {
-    id: "playtime",
-    label: "Playtime",
-    icon: CLOCK,
-    color: "text-emerald-400",
-    format: formatDuration,
-  },
-  {
-    id: "distance",
-    label: "Distance Walked",
-    icon: FOOTPRINTS,
-    color: "text-sky-400",
-    // Not tracked yet; shown but not selectable.
-    disabled: true,
-    format: (km: number) => `${km.toLocaleString("en-US")} km`,
-  },
-];
+// Stats the leaderboard ranks by; only playtime for now.
+const STAT = {
+  label: "Playtime",
+  icon: CLOCK,
+  color: "text-emerald-400",
+  format: formatDuration,
+};
 
 const RANGES = [
   { id: "today", label: "Today" },
@@ -112,30 +91,33 @@ function Segmented({
   );
 }
 
-// Stat and time range select above the ranked list, like the old leaderboard.
+// Page title with the time range select, above the ranked list.
 export function Leaderboard({ data }: { data: LeaderboardData }) {
-  const [statId, setStat] = useState(STATS[0].id);
   const [rangeId, setRange] = useState("all");
-  const stat = STATS.find((s) => s.id === statId) ?? STATS[0];
-  const rows = data[`${statId}:${rangeId}`] ?? [];
+  const stat = STAT;
+  const key = `playtime:${rangeId}`;
+  const rows = data[key] ?? [];
   const top = rows[0]?.value || 1;
 
-  function pick(nextStat: string, nextRange: string) {
-    setStat(nextStat);
-    setRange(nextRange);
-  }
-
   return (
-    <div className={`mt-8 ${rise} [animation-delay:60ms]`}>
-      <div className="flex flex-wrap justify-between gap-2">
-        <Segmented options={STATS} value={statId} onChange={(id) => pick(id, rangeId)} />
-        <Segmented options={RANGES} value={rangeId} onChange={(id) => pick(statId, id)} />
+    <div>
+      <div className={`flex flex-wrap items-end justify-between gap-x-6 gap-y-4 ${rise}`}>
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-heading">Leaderboard</h1>
+          <p className="mt-1 text-[15px] text-search-text">The most played TickLog players.</p>
+        </div>
+        <Segmented options={RANGES} value={rangeId} onChange={setRange} />
       </div>
 
-      <div className="mt-3 overflow-hidden rounded-[12px] border border-search-border bg-search">
-        <ScrollArea className="h-[calc(100dvh-214px)] min-h-[280px]" resetKey={`${statId}:${rangeId}`}>
+      <div className={`mt-6 overflow-hidden rounded-[12px] border border-search-border bg-search ${rise} [animation-delay:60ms]`}>
+        <ScrollArea className="max-h-[calc(100dvh-196px)] max-md:max-h-[calc(100dvh-260px)]" resetKey={key}>
+          {rows.length === 0 && (
+            <p className="flex h-40 items-center justify-center text-[14px] text-search-border">
+              No playtime yet
+            </p>
+          )}
           {/* Re-keyed on every switch so the rows build up again. */}
-          <ol key={`${statId}:${rangeId}`} className="divide-y divide-search-border">
+          <ol key={key} className="divide-y divide-search-border">
             {rows.map((r, i) => {
               const big = i < 3;
               const delay = Math.min(i, 12) * 40;
