@@ -133,15 +133,7 @@ export function OnlineChart({
           <p className="text-[12px] font-semibold tracking-wider text-search-text uppercase">
             Online Now
           </p>
-          <p className="mt-1 flex items-center gap-2 text-2xl font-semibold text-heading tabular-nums">
-            <span className="relative flex size-2.5">
-              {data.now > 0 && (
-                <span className="absolute inset-0 animate-ping rounded-full bg-emerald-400 opacity-60 motion-reduce:animate-none" />
-              )}
-              <span
-                className={`relative size-2.5 rounded-full ${data.now > 0 ? "bg-emerald-400" : "bg-search-border"}`}
-              />
-            </span>
+          <p className="mt-1 text-2xl font-semibold text-heading tabular-nums">
             {data.now.toLocaleString("en-US")}
           </p>
         </div>
