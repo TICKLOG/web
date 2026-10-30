@@ -151,6 +151,18 @@ export const hiddenServers = ticklog.table(
   (t) => [primaryKey({ columns: [t.uuid, t.server] })],
 );
 
+// Profile views: each viewer counts once per player and month. `viewer` is an
+// HMAC of the TickLog user id or the IP, so no IPs are stored.
+export const profileViews = ticklog.table(
+  "profile_views",
+  {
+    uuid: uuid().notNull(),
+    month: date().notNull(),
+    viewer: text().notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.uuid, t.month, t.viewer] })],
+);
+
 // Legacy Microsoft-only sessions, kept to attach existing users on their
 // first Discord login.
 export const sessions = ticklog.table(
