@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   ),
   // Every page is just "TickLog" in the browser tab.
   title: "TickLog",
-  description: "Track your lifetime Minecraft stats.",
+  description: "Track your lifetime Minecraft playtime.",
 };
 
 // Keeps everything inside out of the prerendered shell; otherwise Next.js

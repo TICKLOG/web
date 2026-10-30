@@ -3,8 +3,7 @@ import { isIP } from "node:net";
 import { getDomain } from "tldts";
 import { and, desc, eq, gte, ne, notExists, sql } from "drizzle-orm";
 import { db } from "@/db";
-import { hiddenServers, modSessions, playerSettings, playtime, servers, stats } from "@/db/schema";
-import { parseStats, STAT_KEYS } from "@/lib/stats";
+import { hiddenServers, modSessions, playerSettings, playtime, servers } from "@/db/schema";
 import { pingStatus } from "@/lib/server-ping";
 import type { BreakdownData } from "@/components/breakdown";
 
@@ -105,12 +104,7 @@ export async function iconAddress(name: string) {
 
 // Credits the time since the last beat (capped) to `kind`/`server` on today's
 // UTC day. Returns false if the token is unknown or was replaced.
-// Column name of a stat in SQL (mobKills -> mob_kills).
-const snake = (key: string) => key.replace(/[A-Z]/g, (c) => `_${c.toLowerCase()}`);
-
-// `rawStats` are the stats the mod counted since its last heartbeat; they're
-// capped for the time credited (see lib/stats.ts).
-export async function creditBeat(token: string, kind: Kind, server: string, rawStats?: unknown) {
+export async function creditBeat(token: string, kind: Kind, server: string) {
   return db.transaction(async (tx) => {
     const [session] = await tx
       .select({ uuid: modSessions.uuid, lastBeatAt: modSessions.lastBeatAt })
@@ -131,17 +125,6 @@ export async function creditBeat(token: string, kind: Kind, server: string, rawS
           target: [playtime.uuid, playtime.day, playtime.kind, playtime.server],
           set: { seconds: sql`${playtime.seconds} + excluded.seconds` },
         });
-      // Stats only happen in a world, never in the launcher.
-      const values = parseStats(rawStats, seconds);
-      if (kind !== "launcher" && STAT_KEYS.some((k) => values[k] > 0)) {
-        await tx
-          .insert(stats)
-          .values({ uuid: session.uuid, day: now.toISOString().slice(0, 10), kind, server, ...values })
-          .onConflictDoUpdate({
-            target: [stats.uuid, stats.day, stats.kind, stats.server],
-            set: Object.fromEntries(STAT_KEYS.map((k) => [k, sql`${stats[k]} + excluded.${sql.identifier(snake(k))}`])),
-          });
-      }
     }
     return true;
   });

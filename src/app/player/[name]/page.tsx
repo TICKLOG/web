@@ -12,7 +12,6 @@ import { LikeButton } from "@/components/like-button";
 import { PlayerLinks } from "@/components/player-links";
 import { ProfileViews } from "@/components/profile-views";
 import { PlayerSkin } from "@/components/player-skin";
-import { StatsBox } from "@/components/stats-box";
 import { Streak } from "@/components/streak";
 import { db } from "@/db";
 import { likes, minecraftAccounts, playerBadges, users } from "@/db/schema";
@@ -20,7 +19,6 @@ import { getCurrentUser } from "@/lib/auth/user";
 import { BADGES } from "@/lib/badges";
 import { capeHash, loadCapes, rememberCape } from "@/lib/capes";
 import { locatorColor } from "@/lib/minecraft";
-import { loadStats } from "@/lib/stats";
 import { loadViews } from "@/lib/views";
 import { fetchTextures, lookupPlayer } from "@/lib/mojang";
 import {
@@ -92,7 +90,6 @@ export default async function PlayerPage({
     { hidden, ...links },
     views,
     capes,
-    statsData,
     ...playtime
   ] = await Promise.all([
     isLinked(profile.uuid),
@@ -102,7 +99,6 @@ export default async function PlayerPage({
     loadPlayerSettings(profile.uuid),
     loadViews(profile.uuid),
     loadCapes(profile.uuid),
-    loadStats(profile.uuid),
     loadDays(profile.uuid),
     loadBreakdown(profile.uuid),
     loadStreak(profile.uuid),
@@ -115,7 +111,6 @@ export default async function PlayerPage({
       ]
     : playtime;
   const emptyText = hidden ? "Hidden" : undefined;
-  const statGroups = hidden ? { groups: [], servers: [] } : statsData;
   const color = locatorColor(profile.uuid);
   // Searched players keep every cape they were seen wearing. Saved after the
   // response; a cape seen for the first time is added to the list here.
@@ -167,16 +162,14 @@ export default async function PlayerPage({
           </div>
         </div>
 
-        {/* Both columns end at the same height (lg): the skin box takes up the
-            difference on the left, the stats box on the right. */}
-        <div className="mt-6 flex flex-col gap-4 lg:flex-row lg:items-stretch lg:gap-6">
+        <div className="mt-6 flex flex-col gap-4 lg:flex-row lg:items-start lg:gap-6">
           {/* Capes clicked or hovered in the list show on the 3D skin. */}
           <CapePreviewProvider>
             {/* Below lg its boxes join the column: skin, activity and
                 stats, then capes and badges. */}
-            <div className="contents lg:flex lg:w-80 lg:shrink-0 lg:flex-col lg:gap-4">
+            <div className="contents lg:block lg:w-80 lg:shrink-0">
               <div
-                className={`relative flex w-full flex-col items-center overflow-hidden rounded-[12px] border border-search-border bg-search lg:w-80 lg:flex-1 lg:justify-center ${rise} [animation-delay:100ms]`}
+                className={`relative flex w-full flex-col lg:w-80 items-center overflow-hidden rounded-[12px] border border-search-border bg-search ${rise} [animation-delay:100ms]`}
               >
                 <p className="pointer-events-none absolute top-4 left-4 z-30 text-[12px] font-semibold tracking-wider text-search-text uppercase">
                   Skin
@@ -195,17 +188,17 @@ export default async function PlayerPage({
 
               <Capes
                 capes={capes}
-                className={`order-3 ${rise} [animation-delay:150ms]`}
+                className={`order-3 lg:mt-4 ${rise} [animation-delay:150ms]`}
               />
               <Badges
                 badges={badges}
-                className={`order-4 ${rise} [animation-delay:150ms]`}
+                className={`order-4 lg:mt-4 ${rise} [animation-delay:150ms]`}
               />
             </div>
           </CapePreviewProvider>
 
-          {/* Activity, playtime and stats. */}
-          <div className="order-2 flex min-w-0 flex-col gap-4 lg:w-fit">
+          {/* As tall as the skin box (480px canvas plus its border). */}
+          <div className="order-2 flex min-w-0 flex-col gap-4 lg:h-[482px] lg:w-fit">
             <Heatmap
               data={days}
               accent={color}
@@ -216,13 +209,7 @@ export default async function PlayerPage({
               accent={color}
               data={breakdown}
               emptyText={emptyText}
-              className={`${rise} [animation-delay:200ms]`}
-            />
-            <StatsBox
-              groups={statGroups.groups}
-              servers={statGroups.servers}
-              emptyText={emptyText}
-              className={`lg:flex-1 ${rise} [animation-delay:250ms]`}
+              className={`min-h-0 flex-1 ${rise} [animation-delay:200ms]`}
             />
           </div>
         </div>

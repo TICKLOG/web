@@ -2,7 +2,7 @@
 
 import { useOptimistic, useRef, useState, useTransition } from "react";
 import {
-  resetStats,
+  resetPlaytime,
   setLink,
   setProfileHidden,
   setServerHidden,
@@ -126,7 +126,7 @@ function LinksForm({ uuid, links }: { uuid: string; links: Links }) {
   );
 }
 
-// Privacy settings, links and stats reset of one linked Minecraft account.
+// Privacy settings, links and playtime reset of one linked Minecraft account.
 export function AccountSettings({
   uuid,
   hidden,
@@ -215,16 +215,16 @@ export function AccountSettings({
       </SettingsSection>
 
       <SettingsSection
-        title="Reset Stats"
-        description="This removes all stats tracked for this account, including playtime."
+        title="Reset Playtime"
+        description="This removes all playtime tracked for this account."
         delay={210}
       >
-        <SettingsRow text="Permanently delete the stats of this account.">
+        <SettingsRow text="Permanently delete the playtime of this account.">
           <DangerButton
-            label="Reset Stats"
+            label="Reset Playtime"
             confirmLabel="Confirm Reset"
             pendingLabel="Resetting…"
-            action={() => resetStats(uuid)}
+            action={() => resetPlaytime(uuid)}
           />
         </SettingsRow>
       </SettingsSection>

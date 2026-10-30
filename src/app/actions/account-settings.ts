@@ -3,7 +3,7 @@
 import { and, eq } from "drizzle-orm";
 import { refresh } from "next/cache";
 import { db } from "@/db";
-import { hiddenServers, minecraftAccounts, playerSettings, playtime, stats } from "@/db/schema";
+import { hiddenServers, minecraftAccounts, playerSettings, playtime } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth/user";
 import { parseDiscord, parseTwitch, parseX, parseYoutube } from "@/lib/links";
 
@@ -56,12 +56,10 @@ export async function setLink(uuid: string, key: keyof typeof PARSE, input: stri
   return { value };
 }
 
-// Deletes all tracked stats of the account, playtime included; tracking goes
-// on from zero.
-export async function resetStats(uuid: string) {
+// Deletes all tracked playtime of the account; tracking goes on from zero.
+export async function resetPlaytime(uuid: string) {
   if (!(await ownsAccount(uuid))) return;
   await db.delete(playtime).where(eq(playtime.uuid, uuid));
-  await db.delete(stats).where(eq(stats.uuid, uuid));
   await db.delete(hiddenServers).where(eq(hiddenServers.uuid, uuid));
   refresh();
 }

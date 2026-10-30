@@ -114,8 +114,9 @@ export const playtime = ticklog.table(
 
 // Server addresses the mod reported, checked with a server list ping. Only
 // reachable ones are listed on profiles and get an icon.
-// Stats counted by the mod (walked and flown in blocks), per UTC day and,
-// like playtime, per kind and server.
+// Stats counted by mod 1.1.0 (walked and flown in blocks), per UTC day and,
+// like playtime, per kind and server. Not written or shown since the stats
+// were taken out again; the code is on the mod's `stats` branch.
 export const stats = ticklog.table(
   "stats",
   {

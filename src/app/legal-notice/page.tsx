@@ -16,9 +16,9 @@ export default function LegalNoticePage() {
 
         <LegalSection title="Purpose" delay={105}>
           <p>
-            TickLog is a website and Minecraft mod for recording and displaying
-            Minecraft player statistics. Basic orientation: information about
-            Minecraft players and their stats.
+            TickLog is a website and Minecraft mod for recording playtime and
+            displaying player statistics. Basic orientation: information about
+            Minecraft players and their playtime.
           </p>
         </LegalSection>
 
