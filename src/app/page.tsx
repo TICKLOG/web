@@ -63,10 +63,11 @@ export default async function Home() {
         />
 
         {/* Site totals, players online with the mod, and today's top server
-            and player down to the bottom of the page. */}
-        <div className="mt-8 flex flex-1 flex-col">
+            and player down to the bottom of the page. Wide screens keep room
+            on the right (a 16rem column and its gap). */}
+        <div className="mt-8 flex flex-1 flex-col xl:mr-[268px]">
           <div className="flex min-w-0 flex-1 flex-col">
-            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-3 lg:grid-cols-4">
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-3 lg:grid-cols-4 xl:grid-cols-2 2xl:grid-cols-4">
               <StatTile
                 label="Tracked Players"
                 value={stats.players}
