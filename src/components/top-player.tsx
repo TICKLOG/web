@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { formatDuration } from "@/lib/format";
 import type { LeaderboardRow } from "./leaderboard";
@@ -34,21 +35,29 @@ export function TopPlayer({
     <div
       className={`flex flex-col rounded-[12px] border border-search-border bg-search p-4 ${className}`}
     >
-      <div className="flex items-center justify-between">
-        <p className={label}>Top Player Today</p>
-        <span className="font-minecraft text-lg leading-none text-yellow-400">
-          #1
-        </span>
-      </div>
+      <p className={label}>Top Player Today</p>
+      {/* Head, name and time, like a row on the leaderboard. */}
       <Link
         href={`/@${player.name.toLowerCase()}`}
-        className="mt-3 truncate text-[18px] font-semibold text-heading underline-offset-4 hover:underline"
+        className="group mt-3 flex min-w-0 items-center gap-3"
       >
-        {player.name}
+        <Image
+          src={`/heads/${player.uuid}.png`}
+          alt=""
+          width={36}
+          height={36}
+          unoptimized
+          className="size-9 shrink-0 rounded-[4px] [image-rendering:pixelated]"
+        />
+        <span className="min-w-0">
+          <span className="block truncate text-[16px] font-semibold text-heading underline-offset-4 group-hover:underline">
+            {player.name}
+          </span>
+          <span className="block text-[13px] text-search-text tabular-nums">
+            {formatDuration(player.value)} today
+          </span>
+        </span>
       </Link>
-      <p className="mt-0.5 text-[13px] text-search-text tabular-nums">
-        {formatDuration(player.value)} today
-      </p>
       <FitSkin
         textures={textures}
         className="mt-2 h-72 lg:h-auto lg:min-h-24 lg:flex-1"
