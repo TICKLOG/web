@@ -1,8 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useRef, useState, useTransition } from "react";
-import { findPlayer } from "@/app/actions/players";
+import { useRef, useState } from "react";
 import { SearchExpandButton } from "./sidebar-controls";
 
 // Lucide "search" icon.
@@ -26,12 +25,11 @@ function SearchIcon() {
 
 const FLASH_MS = 800;
 
-// "Search Player": on Enter, checks the name with Mojang. The border flashes
-// green and the player page opens, or flashes red if there is no such player.
+// "Search Player": on Enter, opens the player page and checks the name with
+// Mojang. The border flashes green, or red if there is no such player.
 export function SearchPlayer() {
   const router = useRouter();
   const [flash, setFlash] = useState<"found" | "missing" | null>(null);
-  const [, startTransition] = useTransition();
   const flashTimeout = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   function showFlash(result: "found" | "missing") {
@@ -48,12 +46,14 @@ export function SearchPlayer() {
         e.preventDefault();
         const name = new FormData(e.currentTarget).get("player")?.toString().trim();
         if (!name) return;
-        startTransition(async () => {
-          const player = await findPlayer(name);
-          if (!player) return showFlash("missing");
-          showFlash("found");
-          router.push(`/@${player.toLowerCase()}`);
-        });
+        if (!/^[A-Za-z0-9_]{1,16}$/.test(name)) return showFlash("missing");
+        // Opens the page right away, so its loading spinner shows while the
+        // name is checked; the check only colors the border.
+        router.push(`/@${name.toLowerCase()}`);
+        fetch(`/api/player?name=${name}`)
+          .then((r) => r.json())
+          .then(({ found }) => showFlash(found ? "found" : "missing"))
+          .catch(() => {});
       }}
     >
       <label
