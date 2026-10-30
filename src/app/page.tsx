@@ -1,4 +1,5 @@
 import { CountUp } from "@/components/count-up";
+import { DriftWall } from "@/components/drift-wall";
 import { Icon } from "@/components/icon";
 import { loadSiteStats } from "@/lib/site-stats";
 
@@ -41,9 +42,14 @@ function StatTile({
 export default async function Home() {
   const stats = await loadSiteStats();
   return (
-    <main className="flex flex-1 flex-col px-4 py-16 md:px-10 md:pb-10">
-      <div className="flex flex-1 items-center justify-center">
-        <div className={`text-center ${rise}`}>
+    <main className="relative flex flex-1 flex-col overflow-hidden px-4 py-16 md:px-10 md:pb-10">
+      <DriftWall />
+      {/* Title and stats sit on top of the wall; the text gets a soft
+          background-colored glow so it stays readable. */}
+      <div className="pointer-events-none relative flex flex-1 items-center justify-center">
+        <div
+          className={`rounded-[32px] bg-[radial-gradient(closest-side,var(--background)_55%,transparent)] px-6 py-12 text-center sm:px-16 ${rise}`}
+        >
           <h1 className="text-5xl leading-none font-bold tracking-tight text-heading">
             TICKLOG
           </h1>
@@ -54,7 +60,7 @@ export default async function Home() {
       </div>
 
       {/* Site totals at the bottom of the page. */}
-      <div className="mx-auto mt-16 grid w-full max-w-4xl grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-3 lg:grid-cols-4">
+      <div className="relative mx-auto mt-16 grid w-full max-w-4xl grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-3 lg:grid-cols-4">
         <StatTile
           label="Tracked Players"
           value={stats.players}

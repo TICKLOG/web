@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { useOptimistic, useState, useTransition } from "react";
 import { reorderAccounts, unlinkAccount } from "@/app/actions/accounts";
 import { Icon } from "./icon";
-import { NavDivider } from "./nav-item";
+import { NavDivider, NavItem } from "./nav-item";
 import { setSidebarCollapsed } from "./sidebar-controls";
 
 export type NavAccount = { uuid: string; name: string };
@@ -30,8 +30,15 @@ const branch =
 const subItem =
   "flex h-9 w-full cursor-pointer items-center gap-2.5 rounded-[8px] px-2.5 text-left text-[14px] transition-colors collapsed:px-3";
 
-// "Accounts" nav item that expands into the linked Minecraft accounts.
-export function AccountsNav({ accounts }: { accounts: NavAccount[] }) {
+// "Accounts" nav item that expands into the linked Minecraft accounts, with
+// "Team" above it for team members.
+export function AccountsNav({
+  accounts,
+  team,
+}: {
+  accounts: NavAccount[];
+  team: boolean;
+}) {
   const pathname = usePathname();
   const [optimisticAccounts, setOptimisticAccounts] = useOptimistic(accounts);
   // While dragging: the account being moved and the order shown meanwhile.
@@ -45,6 +52,20 @@ export function AccountsNav({ accounts }: { accounts: NavAccount[] }) {
   return (
     <>
       <NavDivider />
+      {team && (
+        <NavItem
+          label="Team"
+          href="/team"
+          icon={
+            // Lucide "shield-user"
+            <Icon>
+              <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+              <path d="M6.376 18.91a6 6 0 0 1 11.249.003" />
+              <circle cx="12" cy="11" r="4" />
+            </Icon>
+          }
+        />
+      )}
       <li>
         {/* Always expanded; only clickable in the collapsed sidebar, to open it. */}
         <button
