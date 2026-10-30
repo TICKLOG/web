@@ -26,7 +26,8 @@ export async function loadSiteStats(): Promise<SiteStats> {
       -- Only verified public servers, like on player pages.
       (select count(distinct p.server) from ticklog.playtime p
         join ticklog.servers s on s.address = p.server and s.reachable)::int as servers,
-      (select count(*) from ticklog.minecraft_accounts)::int as registered
+      -- TickLog users logged in with Discord.
+      (select count(*) from ticklog.users where auth_id is not null)::int as registered
   `);
   return {
     players: row.players,

@@ -1,3 +1,4 @@
+import { CountUp } from "@/components/count-up";
 import { Icon } from "@/components/icon";
 import { loadSiteStats } from "@/lib/site-stats";
 
@@ -31,7 +32,7 @@ function StatTile({
         </Icon>
       </div>
       <p className="text-xl font-semibold text-heading tabular-nums sm:mt-1 sm:text-2xl">
-        {value.toLocaleString("en-US")}
+        <CountUp value={value} />
       </p>
     </div>
   );
