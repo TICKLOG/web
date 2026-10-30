@@ -56,18 +56,18 @@ export default async function Home() {
   const topTextures = topPlayer ? await fetchTextures(topPlayer.uuid) : null;
   return (
     <main className="flex min-w-0 flex-1 flex-col px-4 pt-6 pb-10 md:px-10 md:pt-[30px]">
-      <div className="flex flex-1 flex-col">
+      <div className="flex w-full max-w-7xl flex-1 flex-col">
         <PageHeader
           title="TICKLOG"
           description="Track your Minecraft playtime with a single mod."
         />
 
         {/* Site totals, players online with the mod, and today's top server
-            and player down to the bottom of the page. Wide screens keep room
-            on the right (a 16rem column and its gap). */}
-        <div className="mt-8 flex flex-1 flex-col xl:mr-[268px]">
+            and player down to the bottom of the page. At most 80rem wide, so
+            it stays put when the sidebar collapses. */}
+        <div className="mt-8 flex flex-1 flex-col">
           <div className="flex min-w-0 flex-1 flex-col">
-            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-3 lg:grid-cols-4 xl:grid-cols-2 2xl:grid-cols-4">
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-3 lg:grid-cols-4">
               <StatTile
                 label="Tracked Players"
                 value={stats.players}
