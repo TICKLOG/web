@@ -1,7 +1,8 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { OnlineData, OnlinePoint } from "@/lib/online";
+import { CountUp } from "./count-up";
 import { Segmented } from "./segmented";
 
 type Range = "today" | "week" | "month" | "year";
@@ -90,6 +91,25 @@ export function OnlineChart({
   const [width, setWidth] = useState(0);
   const [hover, setHover] = useState<number | null>(null);
   const box = useRef<HTMLDivElement>(null);
+  const [online, setOnline] = useState(data.now);
+
+  // Live count: asks again every 30 seconds while the tab is visible.
+  useEffect(() => {
+    const poll = async () => {
+      if (document.hidden) return;
+      const res = await fetch("/api/online", { cache: "no-store" }).catch(
+        () => null,
+      );
+      const body = res?.ok ? ((await res.json()) as { online: number }) : null;
+      if (body) setOnline(body.online);
+    };
+    const id = setInterval(poll, 30_000);
+    document.addEventListener("visibilitychange", poll);
+    return () => {
+      clearInterval(id);
+      document.removeEventListener("visibilitychange", poll);
+    };
+  }, []);
 
   useLayoutEffect(() => {
     const el = box.current;
@@ -134,7 +154,7 @@ export function OnlineChart({
             Online Now
           </p>
           <p className="mt-1 text-2xl font-semibold text-heading tabular-nums">
-            {data.now.toLocaleString("en-US")}
+            <CountUp value={online} />
           </p>
         </div>
         <Segmented

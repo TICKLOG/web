@@ -20,6 +20,17 @@ export async function sampleOnline() {
   `);
 }
 
+// Players online right now; kept for 15 seconds, for the live count on the
+// home page.
+export async function countOnline() {
+  "use cache";
+  cacheLife({ stale: 10, revalidate: 15, expire: 60 });
+  const [row] = await db.execute<{ online: number }>(sql`
+    select count(*)::int as online from ticklog.mod_sessions where last_beat_at > ${ONLINE}
+  `);
+  return row.online;
+}
+
 export type OnlinePoint = { at: string; value: number };
 export type OnlineData = {
   now: number;
